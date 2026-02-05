@@ -1,0 +1,23 @@
+{
+  "name": "cma-backend-root",
+  "version": "1.0.0",
+  "description": "Root of CMA Backend Monorepo",
+  "private": true,
+  "scripts": {
+    "install:all": "npm install",
+    "dev": "concurrently \"npm run dev:gateway\" --names \"GATEWAY\" --prefix-colors \"blue\"",
+    "dev:gateway": "npm run dev -w api-gateway"
+  },
+  "workspaces": [
+    "apps/*",
+    "libs/core/*",
+    "libs/modules/*"
+  ],
+  "devDependencies": {
+    "concurrently": "^8.0.0",
+    "nodemon": "^3.0.0"
+  },
+  "dependencies": {},
+  "author": "",
+  "license": "ISC"
+}

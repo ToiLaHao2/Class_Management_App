@@ -1,0 +1,9 @@
+{
+    "name": "@libs/database",
+    "version": "1.0.0",
+    "main": "src/index.js",
+    "dependencies": {
+        "firebase": "^12.8.0",
+        "firebase-admin": "^13.6.1"
+    }
+}
