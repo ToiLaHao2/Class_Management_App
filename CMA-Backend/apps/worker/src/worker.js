@@ -6,9 +6,6 @@ const cacheConfig = require('../../../libs/core/config/src/configs/cache.config'
 
 const processors = require('./processors');
 
-const envPath = path.resolve(__dirname, '../../../.env');
-require('dotenv').config({ path: envPath });
-
 const redisConfig = {
     host: cacheConfig.redis.host,
     port: cacheConfig.redis.port,
