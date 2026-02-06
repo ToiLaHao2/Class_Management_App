@@ -1,0 +1,20 @@
+{
+  "name": "socket",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/socket.js",
+  "scripts": {
+    "dev": "nodemon src/socket.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "@socket.io/redis-adapter": "^8.3.0",
+    "dotenv": "^17.2.4",
+    "ioredis": "^5.9.2",
+    "socket.io": "^4.8.3"
+  }
+}

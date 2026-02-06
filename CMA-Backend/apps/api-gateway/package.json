@@ -1,9 +1,9 @@
 {
     "name": "api-gateway",
     "version": "1.0.0",
-    "main": "src/index.js",
+    "main": "src/server.js",
     "scripts": {
-        "dev": "nodemon src/index.js"
+        "dev": "nodemon src/server.js"
     },
     "dependencies": {
         "cors": "^2.8.6",

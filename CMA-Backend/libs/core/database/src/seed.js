@@ -1,3 +1,5 @@
+// seed data admin o day
+
 const SEED_ADMIN_EMAIL = process.env.ADMIN_EMAIL;
 const SEED_ADMIN_PASSWORD = process.env.ADMIN_DEFAULT_PASSWORD;
 
