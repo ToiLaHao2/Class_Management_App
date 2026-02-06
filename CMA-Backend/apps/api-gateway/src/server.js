@@ -4,8 +4,8 @@ const cors = require('cors');
 const helmet = require('helmet');
 
 
-const appConfig = require('../../../libs/core/config/src/configs/app.config');
-const { runSystemCheck } = require('../../../libs/core/utils/src/index');
+const appConfig = require('@libs/config/src/configs/app.config');
+const { runSystemCheck } = require('@libs/utils/src/index');
 
 // === MIDDLEWARES ===
 

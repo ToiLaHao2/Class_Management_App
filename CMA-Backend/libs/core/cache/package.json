@@ -2,6 +2,7 @@
     "name": "@libs/cache",
     "version": "1.0.0",
     "main": "src/index.js",
+    "private": true,
     "dependencies": {
         "ioredis": "^5.9.2",
         "lru-cache": "6.0.0"
