@@ -5,7 +5,7 @@ const helmet = require('helmet');
 
 const appConfig = require('@core/config/src/configs/app.config');
 const { runSystemCheck } = require('@core/utils/src/index');
-const { loadModules } = require('@core/shared');
+const { loadModules, eventBus } = require('@core/shared');
 
 // === APP SETUP ===
 const app = express();
@@ -32,10 +32,9 @@ app.get('/', (req, res) => {
 // Khi them module moi, chi can tao src/index.js export AppModule instance
 // Khong can sua file nay
 const deps = {
-    // TODO: sau khi setup xong db va eventBus, inject vao day
+    eventBus,
     // db:       require('@core/database').firebase.getDB(),
     // cache:    require('@core/cache'),
-    // eventBus: require('@core/shared/event-bus'),
 };
 loadModules(app, deps);
 
