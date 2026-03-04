@@ -28,13 +28,10 @@ app.get('/', (_req: Request, res: Response) => {
     });
 });
 
+import { container } from '@core/container';
+
 // === LOAD ALL MODULES (auto-discovery) ===
-const deps = {
-    eventBus,
-    // db:    require('@core/database').firebaseAdapter.getDB(),
-    // cache: require('@core/cache'),
-};
-loadModules(app, deps);
+loadModules(app, container);
 
 // === 404 NOT FOUND HANDLER ===
 app.use((req: Request, _res: Response, next: NextFunction) => {
