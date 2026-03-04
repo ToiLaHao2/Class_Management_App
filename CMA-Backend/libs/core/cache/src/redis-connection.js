@@ -11,7 +11,7 @@
  */
 
 const Redis = require('ioredis');
-const cacheConfig = require('../../config/src/configs/cache.config');
+const { cacheConfig } = require('../../config');
 
 /**
  * @param {Object} extraOptions - Tuy chon bo sung cho ioredis

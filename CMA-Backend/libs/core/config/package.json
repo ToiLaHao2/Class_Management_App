@@ -2,5 +2,9 @@
   "name": "@core/config",
   "version": "1.0.0",
   "main": "src/index.js",
-  "private": true
+  "private": true,
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "zod": "^3.22.4"
+  }
 }

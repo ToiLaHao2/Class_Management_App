@@ -3,9 +3,10 @@ const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
 
-const appConfig = require('@core/config/src/configs/app.config');
+const { appConfig } = require('@core/config');
 const { runSystemCheck } = require('@core/utils/src/index');
 const { loadModules, eventBus } = require('@core/shared');
+const { globalErrorHandler, NotFoundError } = require('@core/exceptions');
 
 // === APP SETUP ===
 const app = express();
@@ -37,6 +38,16 @@ const deps = {
     // cache:    require('@core/cache'),
 };
 loadModules(app, deps);
+
+// === 404 NOT FOUND HANDLER ===
+// Neu request den mot URL ma chua module nao dang ky
+app.all('*', (req, res, next) => {
+    next(new NotFoundError(`Can't find ${req.method} ${req.originalUrl} on this server!`));
+});
+
+// === GLOBAL ERROR HANDLER ===
+// Phai dat o cuoi cung, duoi tat ca cac routes
+app.use(globalErrorHandler);
 
 // === START SERVER ===
 app.listen(PORT, () => {

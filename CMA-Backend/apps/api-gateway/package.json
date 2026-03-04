@@ -7,8 +7,10 @@
     },
     "dependencies": {
         "@core/config": "1.0.0",
-        "@core/utils": "1.0.0",
+        "@core/exceptions": "1.0.0",
+        "@core/http": "1.0.0",
         "@core/shared": "1.0.0",
+        "@core/utils": "1.0.0",
         "cors": "^2.8.6",
         "dotenv": "^17.2.3",
         "express": "^5.2.1",

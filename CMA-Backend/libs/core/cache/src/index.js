@@ -3,7 +3,7 @@
 
 const Redis = require('ioredis');
 const LRUCache = require('lru-cache');
-const cacheConfig = require('../../config/src/configs/cache.config');
+const { cacheConfig } = require('../../config');
 
 class CacheManager {
     constructor() {

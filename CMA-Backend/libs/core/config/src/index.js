@@ -1,11 +1,10 @@
-const appConfig = require('./configs/app.config');
-const databaseConfig = require('./configs/database.config');
-const storageConfig = require('./configs/storage.config');
-const cacheConfig = require('./configs/cache.config');
+// env.validation.js se tu ngam chay dong process.env va block app neu loi
+const validatedEnv = require('./env.validation');
 
 module.exports = {
-    appConfig,
-    databaseConfig,
-    storageConfig,
-    cacheConfig,
+    appConfig: validatedEnv.app,
+    databaseConfig: validatedEnv.firebase,
+    securityConfig: validatedEnv.security,
+    storageConfig: validatedEnv.cloudinary,
+    cacheConfig: validatedEnv.redis,
 };

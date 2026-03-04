@@ -1,6 +1,6 @@
 const admin = require('firebase-admin');
 const BaseAdapter = require('./base.adapter');
-const databaseConfig = require('@core/config/src/configs/database.config');
+const { databaseConfig } = require('@core/config');
 
 class FirebaseAdapter extends BaseAdapter {
     constructor() {
