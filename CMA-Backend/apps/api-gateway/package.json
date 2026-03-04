@@ -6,8 +6,9 @@
         "dev": "nodemon src/server.js"
     },
     "dependencies": {
-        "@libs/config": "^1.0.0",
-        "@libs/utils": "^1.0.0",
+        "@core/config": "1.0.0",
+        "@core/utils": "1.0.0",
+        "@core/shared": "1.0.0",
         "cors": "^2.8.6",
         "dotenv": "^17.2.3",
         "express": "^5.2.1",

@@ -1,2 +1,3 @@
-# Class_Management_App
-This is my work for Skipli Fullstack coding challenge
+# Class Management Web App
+
+- This is a web app th

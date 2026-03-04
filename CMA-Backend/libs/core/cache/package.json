@@ -1,5 +1,5 @@
 {
-    "name": "@libs/cache",
+    "name": "@core/cache",
     "version": "1.0.0",
     "main": "src/index.js",
     "private": true,

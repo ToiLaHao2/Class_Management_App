@@ -17,6 +17,7 @@ class CacheManager {
 
         this.redisClient = null;
         this.useRedis = false;
+        this._promptShown = false;  // chong goi _promptFallback nhieu lan
 
         this.initRedis();
     }
@@ -26,48 +27,96 @@ class CacheManager {
         const redisPort = cacheConfig.redis.port;
         const redisPassword = cacheConfig.redis.password;
 
-        if (redisHost) {
-            console.log('🔄 Connecting to Redis...');
-
-            const redisOptions = {
-                host: redisHost,
-                port: redisPort,
-                password: redisPassword,
-                retryStrategy: (times) => {
-                    const delay = Math.min(times * 50, 2000);
-                    return delay;
-                },
-                showFriendlyErrorStack: true,
-                lazyConnect: true
-            };
-
-            if (cacheConfig.redis.tls || redisHost.includes('upstash')) {
-                console.log('🔒 Redis TLS Enabled (Upstash Detected/Forced)');
-                redisOptions.tls = {};
-            }
-
-            this.redisClient = new Redis(redisOptions);
-
-            this.redisClient.connect().then(() => {
-                console.log('✅ Redis Connected Successfully!');
-                this.useRedis = true;
-            }).catch((err) => {
-                console.error('⚠️ Redis Connection Failed, falling back to Memory:', err.message);
-                this.useRedis = false;
-            });
-
-            this.redisClient.on('error', (err) => {
-                console.error('🔥 Redis Error:', err.message);
-                this.useRedis = false;
-            });
-
-            this.redisClient.on('ready', () => {
-                this.useRedis = true;
-            });
-
-        } else {
-            console.log('⚠️ No REDIS_HOST in env, using In-Memory Cache only.');
+        if (!redisHost) {
+            console.log('⚠️  No REDIS_HOST in env, using In-Memory Cache only.');
+            return;
         }
+
+        console.log('🔄 Connecting to Redis...');
+
+        const MAX_RETRIES = 3;
+        let errorLogged = false;
+
+        const redisOptions = {
+            host: redisHost,
+            port: redisPort,
+            password: redisPassword,
+            lazyConnect: true,
+            showFriendlyErrorStack: false,
+            // Chi retry toi da MAX_RETRIES lan, sau do tra ve null de dung retry
+            retryStrategy: (times) => {
+                if (times > MAX_RETRIES) return null; // dung retry
+                return Math.min(times * 500, 2000);
+            },
+        };
+
+        if (cacheConfig.redis.tls || redisHost.includes('upstash')) {
+            console.log('🔒 Redis TLS Enabled (Upstash Detected/Forced)');
+            redisOptions.tls = {};
+        }
+
+        this.redisClient = new Redis(redisOptions);
+
+        this.redisClient.connect().catch(() => {
+            // Loi duoc xu ly trong event 'error' + 'close' ben duoi
+        });
+
+        this.redisClient.on('error', (err) => {
+            this.useRedis = false;
+            // Chi log 1 lan duy nhat, khong spam
+            if (!errorLogged) {
+                errorLogged = true;
+                console.error(`\n❌ [Cache] Redis connection failed: ${err.message}`);
+            }
+        });
+
+        this.redisClient.on('ready', () => {
+            console.log('✅ Redis Connected Successfully!');
+            this.useRedis = true;
+            errorLogged = false;
+        });
+
+        // Event 'close' fired khi ioredis da tu bo retry (retryStrategy tra null)
+        this.redisClient.on('close', () => {
+            if (!this.useRedis && !this._promptShown) {
+                this._promptShown = true;
+                this._promptFallback();
+            }
+        });
+    }
+
+    /**
+     * Hien thi lua chon fallback sau khi Redis that bai hoan toan.
+     * User nhap 1 = tiep tuc voi In-Memory, 2 = thoat.
+     */
+    _promptFallback() {
+        process.stdout.write(
+            '\n⚠️  Redis is unavailable after multiple retries.\n' +
+            '   [1] Continue with In-Memory cache (data lost on restart)\n' +
+            '   [2] Exit and fix Redis config\n' +
+            'Your choice (1/2): '
+        );
+
+        // Neu stdin khong tuong tac (pipe, CI) thi tu dong chon 1
+        if (!process.stdin.isTTY) {
+            console.log('\n[Auto] Non-interactive mode: using In-Memory cache.');
+            this.useRedis = false;
+            return;
+        }
+
+        process.stdin.resume();
+        process.stdin.setEncoding('utf8');
+        process.stdin.once('data', (input) => {
+            process.stdin.pause();
+            const choice = input.trim();
+            if (choice === '2') {
+                console.log('\n👋 Exiting. Please fix your Redis configuration.');
+                process.exit(0);
+            } else {
+                console.log('\n✅ Using In-Memory cache. All data will be lost on restart.\n');
+                this.useRedis = false;
+            }
+        });
     }
 
     connect() {
@@ -151,6 +200,8 @@ class CacheManager {
     }
 }
 
-// Singleton export
+// Singleton export — chi export cacheManager, khong kem createRedisConnection
+// De tranh viec import @core/cache vo tinh khoi tao singleton khi chi can factory
+// Dung: const { createRedisConnection } = require('@core/cache/src/redis-connection')
 const cacheManager = new CacheManager();
 module.exports = cacheManager;

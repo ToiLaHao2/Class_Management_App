@@ -1,49 +1,44 @@
-const { Server } = require("socket.io");
-const { createAdapter } = require("@socket.io/redis-adapter");
-const Redis = require("ioredis");
-const appConfig = require("../../../libs/core/config/src/configs/app.config");
-const cacheConfig = require("../../../libs/core/config/src/configs/cache.config");
+const { Server } = require('socket.io');
+const { createAdapter } = require('@socket.io/redis-adapter');
+const { createRedisConnection } = require('@core/cache/src/redis-connection');
 
-const PORT = 3002; // Default for socket service
+const PORT = 3002;
 
-console.log("\n--- 🔌 SOCKET SERVICE STARTING ---");
+console.log('\n--- 🔌 SOCKET SERVICE STARTING ---');
 
-// Redis config for Adapter
-const redisOptions = {
-    host: cacheConfig.redis.host,
-    port: cacheConfig.redis.port,
-    password: cacheConfig.redis.password,
-    lazyConnect: true
-};
-
-if (cacheConfig.redis.tls || redisOptions.host.includes('upstash')) {
-    redisOptions.tls = {};
-}
-
-const pubClient = new Redis(redisOptions);
-const subClient = pubClient.duplicate();
-
-Promise.all([pubClient.connect(), subClient.connect()]).then(() => {
-    console.log("✅ [Redis] Adapter connected successfully.");
-
+function startSocketServer(adapter) {
     const io = new Server(PORT, {
-        cors: {
-            origin: "*", // Adjust as needed
-            methods: ["GET", "POST"]
-        },
-        adapter: createAdapter(pubClient, subClient)
+        cors: { origin: '*', methods: ['GET', 'POST'] },
+        ...(adapter ? { adapter } : {})
     });
 
-    io.on("connection", (socket) => {
+    io.on('connection', (socket) => {
         console.log(`⚡ Client connected: ${socket.id}`);
-
-        socket.on("disconnect", () => {
+        socket.on('disconnect', () => {
             console.log(`🔌 Client disconnected: ${socket.id}`);
         });
     });
 
-    console.log(`🚀 Socket Server running on port ${PORT}`);
+    const mode = adapter ? 'Redis adapter' : 'in-memory (single-node)';
+    console.log(`🚀 Socket Server running on port ${PORT} — ${mode}`);
+}
 
-}).catch((err) => {
-    console.error("❌ [Redis] Adapter connection failed:", err);
-});
+// Dung factory tu @core/cache — retry/TLS/error handler da duoc xu ly san
+const pubClient = createRedisConnection({}, '[Socket/pub]');
+const subClient = pubClient ? pubClient.duplicate() : null;
+
+if (!pubClient) {
+    // Khong co Redis — chay in-memory mode luon
+    startSocketServer(null);
+} else {
+    Promise.all([pubClient.connect(), subClient.connect()])
+        .then(() => {
+            console.log('✅ [Socket] Redis adapter connected.');
+            startSocketServer(createAdapter(pubClient, subClient));
+        })
+        .catch(() => {
+            // Loi da duoc log boi createRedisConnection
+            console.warn('⚠️  [Socket] Starting without Redis adapter (single-node mode).');
+            startSocketServer(null);
+        });
+}
