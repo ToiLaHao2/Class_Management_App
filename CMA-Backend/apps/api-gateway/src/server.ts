@@ -12,6 +12,7 @@ import { globalErrorHandler, NotFoundError } from '@core/exceptions';
 import { container } from '@core/container';
 import { RegisterRoutes } from './generated/routes';
 import swaggerDocument from './generated/swagger.json';
+import { ValidateError } from '@tsoa/runtime';
 
 // === APP SETUP ===
 const app = express();
@@ -67,6 +68,27 @@ loadModules(app, container);
 // === 404 NOT FOUND HANDLER ===
 app.use((req: Request, _res: Response, next: NextFunction) => {
     next(new NotFoundError(`Can't find ${req.method} ${req.originalUrl} on this server!`));
+});
+
+// === TSOA ERROR HANDLER ===
+app.use((err: any, req: Request, res: Response, next: NextFunction): void => {
+    if (err instanceof ValidateError) {
+        console.warn(`Caught Validation Error for ${req.path}:`, err.fields);
+        res.status(422).json({
+            message: "Validation Failed",
+            details: err?.fields,
+        });
+        return;
+    }
+    // Auth errors thrown from expressAuthentication
+    if (err instanceof Error && (err.message === 'No token provided' || err.message === 'Invalid token' || err.message === 'Insufficient scope/role')) {
+        res.status(401).json({
+            message: "Authentication Failed",
+            details: err.message,
+        });
+        return;
+    }
+    next(err);
 });
 
 // === GLOBAL ERROR HANDLER ===

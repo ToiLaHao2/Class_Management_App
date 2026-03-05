@@ -10,6 +10,7 @@ import {
     Body,
     SuccessResponse,
     Tags,
+    Security,
 } from '@tsoa/runtime';
 import type { IUser, CreateUserDTO, UpdateUserDTO } from './user.model';
 
@@ -38,6 +39,7 @@ export class UsersController extends Controller {
      * Get a single user by ID
      * @param userId The user's unique identifier
      */
+    @Security('jwt')
     @Get('{userId}')
     public async getUser(@Path() userId: string): Promise<IUser | null> {
         // TODO: Integrate with UserService via DI
@@ -74,6 +76,7 @@ export class UsersController extends Controller {
      * Update a user
      * @param userId The user's unique identifier
      */
+    @Security('jwt', ['admin'])
     @Put('{userId}')
     public async updateUser(
         @Path() userId: string,
@@ -95,6 +98,7 @@ export class UsersController extends Controller {
      * Soft-delete a user
      * @param userId The user's unique identifier
      */
+    @Security('jwt', ['admin'])
     @Delete('{userId}')
     public async deleteUser(@Path() userId: string): Promise<{ message: string }> {
         // TODO: Integrate with UserService via DI

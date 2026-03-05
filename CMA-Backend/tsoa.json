@@ -14,12 +14,20 @@
             "description": "Class Management Application — Auto-generated API Documentation"
         },
         "host": "localhost:3000",
-        "basePath": "/"
+        "basePath": "/",
+        "securityDefinitions": {
+            "jwt": {
+                "type": "apiKey",
+                "name": "Authorization",
+                "in": "header"
+            }
+        }
     },
     "routes": {
         "routesDir": "apps/api-gateway/src/generated",
         "middleware": "express",
-        "iocModule": "apps/api-gateway/src/ioc"
+        "iocModule": "apps/api-gateway/src/ioc",
+        "authenticationModule": "libs/core/http/src/authentication.ts"
     },
     "compilerOptions": {
         "baseUrl": ".",
