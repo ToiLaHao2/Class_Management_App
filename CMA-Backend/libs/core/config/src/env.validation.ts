@@ -7,7 +7,7 @@ dotenv.config({ path: join(__dirname, '../../../../.env') });
 
 const envSchema = z.object({
     NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
-    PORT: z.string().transform(Number).default('3000'),
+    PORT: z.string().transform(Number).default(3000),
 
     JWT_SECRET: z.string().min(10, 'JWT_SECRET is required and must be at least 10 chars'),
     FIREBASE_CREDENTIALS: z.string().min(10, 'FIREBASE_CREDENTIALS JSON string is required'),
@@ -19,6 +19,10 @@ const envSchema = z.object({
     CLOUDINARY_CLOUD_NAME: z.string().optional(),
     CLOUDINARY_API_KEY: z.string().optional(),
     CLOUDINARY_API_SECRET: z.string().optional(),
+
+    RATE_LIMIT_WINDOW_MS: z.string().transform(Number).default(900000),    // 15 minutes
+    RATE_LIMIT_MAX: z.string().transform(Number).default(100),
+    RATE_LIMIT_AUTH_MAX: z.string().transform(Number).default(10),
 });
 
 const _env = envSchema.safeParse(process.env);
@@ -59,4 +63,10 @@ export const storageConfig = {
     cloudName: envVars.CLOUDINARY_CLOUD_NAME,
     apiKey: envVars.CLOUDINARY_API_KEY,
     apiSecret: envVars.CLOUDINARY_API_SECRET,
+} as const;
+
+export const rateLimitConfig = {
+    windowMs: envVars.RATE_LIMIT_WINDOW_MS,
+    max: envVars.RATE_LIMIT_MAX,
+    authMax: envVars.RATE_LIMIT_AUTH_MAX,
 } as const;

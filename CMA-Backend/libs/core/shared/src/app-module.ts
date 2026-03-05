@@ -1,4 +1,5 @@
 import { Application } from 'express';
+import { AwilixContainer } from 'awilix';
 
 /**
  * IAppModule — Interface contract cho tat ca business modules.
@@ -7,5 +8,6 @@ import { Application } from 'express';
 export interface IAppModule {
     readonly name: string;
     readonly basePath: string;
-    register(app: Application, deps: Record<string, unknown>): void;
+    register(app: Application, container: AwilixContainer): void;
 }
+

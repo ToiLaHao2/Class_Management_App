@@ -5,10 +5,13 @@
   "private": true,
   "scripts": {
     "install:all": "npm install",
+    "tsoa:spec": "tsoa spec",
+    "tsoa:routes": "tsoa routes",
+    "tsoa:gen": "tsoa spec && tsoa routes",
     "dev:gateway": "npm run dev -w apps/api-gateway",
     "dev:worker": "npm run dev -w apps/worker",
     "dev:socket": "npm run dev -w apps/socket",
-    "dev": "concurrently \"npm run dev:gateway\" \"npm run dev:worker\" \"npm run dev:socket\" --names \"GATEWAY,WORKER,SOCKET\" --prefix-colors \"blue,yellow,magenta\""
+    "dev": "npm run tsoa:gen && concurrently \"npm run dev:gateway\" \"npm run dev:worker\" \"npm run dev:socket\" --names \"GATEWAY,WORKER,SOCKET\" --prefix-colors \"blue,yellow,magenta\""
   },
   "workspaces": [
     "apps/*",
@@ -25,5 +28,9 @@
     "typescript": "^5.9.3"
   },
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "reflect-metadata": "^0.2.2",
+    "tsoa": "^7.0.0-alpha.0"
+  }
 }

@@ -7,6 +7,10 @@
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
 
+    /* === Decorators (Required for tsoa) === */
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+
     /* === Type Safety === */
     "strict": true,
     "noImplicitAny": true,

@@ -1,6 +1,6 @@
 import { Server } from 'socket.io';
 import { createAdapter } from '@socket.io/redis-adapter';
-import { createRedisConnection } from '@core/cache/src/redis-connection';
+import { container } from '@core/container';
 
 const PORT = 3002;
 
@@ -23,13 +23,17 @@ function startSocketServer(adapter: ReturnType<typeof createAdapter> | null): vo
     console.log(`🚀 Socket Server running on port ${PORT} — ${mode}`);
 }
 
-const pubClient = createRedisConnection({}, '[Socket/pub]');
-const subClient = pubClient ? pubClient.duplicate() : null;
+const cache = container.resolve('cache');
+const baseConnection = cache.getRedisClient();
 
-if (!pubClient) {
+if (!baseConnection) {
     startSocketServer(null);
 } else {
-    Promise.all([pubClient.connect(), subClient!.connect()])
+    // Socket.io Redis adapter needs dedicated connections
+    const pubClient = baseConnection.duplicate();
+    const subClient = baseConnection.duplicate();
+
+    Promise.all([pubClient.connect(), subClient.connect()])
         .then(() => {
             console.log('✅ [Socket] Redis adapter connected.');
             startSocketServer(createAdapter(pubClient, subClient!));
@@ -39,3 +43,4 @@ if (!pubClient) {
             startSocketServer(null);
         });
 }
+

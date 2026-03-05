@@ -38,6 +38,7 @@ class CacheManager {
             password,
             lazyConnect: true,
             showFriendlyErrorStack: false,
+            maxRetriesPerRequest: null, // Required by BullMQ & recommended for custom retryStrategy
             retryStrategy: (times: number) => {
                 if (times > MAX_RETRIES) return null;
                 return Math.min(times * 500, 2000);
@@ -115,9 +116,6 @@ class CacheManager {
     }
 
     getRedisClient(): Redis | null {
-        if (!this.useRedis || !this.redisClient) {
-            console.warn('⚠️ Redis Client requested but Redis is disabled/not ready.');
-        }
         return this.redisClient;
     }
 

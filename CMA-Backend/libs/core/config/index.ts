@@ -3,5 +3,6 @@ export {
     securityConfig,
     databaseConfig,
     cacheConfig,
-    storageConfig
+    storageConfig,
+    rateLimitConfig,
 } from './src/env.validation';

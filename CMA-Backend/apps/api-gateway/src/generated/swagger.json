@@ -1,0 +1,381 @@
+{
+	"openapi": "3.0.0",
+	"components": {
+		"examples": {},
+		"headers": {},
+		"parameters": {},
+		"requestBodies": {},
+		"responses": {},
+		"schemas": {
+			"IUser": {
+				"description": "User Model — TypeScript Interface & Response DTO",
+				"properties": {
+					"id": {
+						"type": "string"
+					},
+					"email": {
+						"type": "string"
+					},
+					"fullName": {
+						"type": "string"
+					},
+					"role": {
+						"type": "string",
+						"enum": [
+							"student",
+							"teacher",
+							"admin"
+						]
+					},
+					"avatar": {
+						"type": "string"
+					},
+					"createdAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"isDeleted": {
+						"type": "boolean"
+					}
+				},
+				"required": [
+					"id",
+					"email",
+					"fullName",
+					"role",
+					"createdAt",
+					"isDeleted"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"CreateUserDTO": {
+				"description": "DTO for creating a new user",
+				"properties": {
+					"email": {
+						"type": "string"
+					},
+					"password": {
+						"type": "string"
+					},
+					"fullName": {
+						"type": "string"
+					},
+					"role": {
+						"type": "string",
+						"enum": [
+							"student",
+							"teacher",
+							"admin"
+						]
+					},
+					"avatar": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"email",
+					"password",
+					"fullName",
+					"role"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"UpdateUserDTO": {
+				"description": "DTO for updating a user",
+				"properties": {
+					"fullName": {
+						"type": "string"
+					},
+					"avatar": {
+						"type": "string"
+					},
+					"role": {
+						"type": "string",
+						"enum": [
+							"student",
+							"teacher",
+							"admin"
+						]
+					}
+				},
+				"type": "object",
+				"additionalProperties": false
+			},
+			"HealthStatus": {
+				"description": "Response shape for the health check endpoint",
+				"properties": {
+					"status": {
+						"type": "string",
+						"enum": [
+							"healthy",
+							"degraded"
+						]
+					},
+					"uptime": {
+						"type": "number",
+						"format": "double"
+					},
+					"timestamp": {
+						"type": "string"
+					},
+					"services": {
+						"properties": {
+							"cloudinary": {
+								"type": "string",
+								"enum": [
+									"configured",
+									"not_configured"
+								]
+							},
+							"firebase": {
+								"type": "string",
+								"enum": [
+									"connected",
+									"disconnected"
+								]
+							},
+							"redis": {
+								"type": "string",
+								"enum": [
+									"connected",
+									"disconnected"
+								]
+							}
+						},
+						"required": [
+							"cloudinary",
+							"firebase",
+							"redis"
+						],
+						"type": "object"
+					}
+				},
+				"required": [
+					"status",
+					"uptime",
+					"timestamp",
+					"services"
+				],
+				"type": "object",
+				"additionalProperties": false
+			}
+		},
+		"securitySchemes": {}
+	},
+	"info": {
+		"title": "cma-backend-root",
+		"version": "1.0.0",
+		"description": "Root of CMA Backend Monorepo",
+		"license": {
+			"name": "ISC"
+		},
+		"contact": {}
+	},
+	"paths": {
+		"/users": {
+			"get": {
+				"operationId": "GetUsers",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/IUser"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"description": "Get all users",
+				"tags": [
+					"Users"
+				],
+				"security": [],
+				"parameters": []
+			},
+			"post": {
+				"operationId": "CreateUser",
+				"responses": {
+					"201": {
+						"description": "Created",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IUser"
+								}
+							}
+						}
+					}
+				},
+				"description": "Create a new user",
+				"tags": [
+					"Users"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/CreateUserDTO"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/users/{userId}": {
+			"get": {
+				"operationId": "GetUser",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"allOf": [
+										{
+											"$ref": "#/components/schemas/IUser"
+										}
+									],
+									"nullable": true
+								}
+							}
+						}
+					}
+				},
+				"description": "Get a single user by ID",
+				"tags": [
+					"Users"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"description": "The user's unique identifier",
+						"in": "path",
+						"name": "userId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			},
+			"put": {
+				"operationId": "UpdateUser",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IUser"
+								}
+							}
+						}
+					}
+				},
+				"description": "Update a user",
+				"tags": [
+					"Users"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"description": "The user's unique identifier",
+						"in": "path",
+						"name": "userId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/UpdateUserDTO"
+							}
+						}
+					}
+				}
+			},
+			"delete": {
+				"operationId": "DeleteUser",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"message": {
+											"type": "string"
+										}
+									},
+									"required": [
+										"message"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"description": "Soft-delete a user",
+				"tags": [
+					"Users"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"description": "The user's unique identifier",
+						"in": "path",
+						"name": "userId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/health": {
+			"get": {
+				"operationId": "GetHealth",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/HealthStatus"
+								}
+							}
+						}
+					}
+				},
+				"description": "System health check — verifies connectivity of all core dependencies.\r\nUsed by deployment platforms (Render, Railway, AWS ECS) to determine app status.",
+				"tags": [
+					"System"
+				],
+				"security": [],
+				"parameters": []
+			}
+		}
+	},
+	"servers": [
+		{
+			"url": "https://localhost:3000/"
+		}
+	]
+}
