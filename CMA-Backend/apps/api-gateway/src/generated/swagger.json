@@ -103,6 +103,81 @@
 				"type": "object",
 				"additionalProperties": false
 			},
+			"Record_string.any_": {
+				"properties": {},
+				"type": "object",
+				"description": "Construct a type with a set of properties K of type T"
+			},
+			"FieldErrors": {
+				"properties": {},
+				"type": "object",
+				"additionalProperties": {
+					"properties": {
+						"value": {},
+						"message": {
+							"type": "string"
+						}
+					},
+					"required": [
+						"message"
+					],
+					"type": "object"
+				}
+			},
+			"ValidateError": {
+				"properties": {
+					"name": {
+						"type": "string"
+					},
+					"message": {
+						"type": "string"
+					},
+					"stack": {
+						"type": "string"
+					},
+					"status": {
+						"type": "number",
+						"format": "double"
+					},
+					"fields": {
+						"$ref": "#/components/schemas/FieldErrors"
+					}
+				},
+				"required": [
+					"name",
+					"message",
+					"status",
+					"fields"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"LoginDTO": {
+				"description": "DTO for User Login",
+				"properties": {
+					"email": {
+						"type": "string"
+					},
+					"password": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"email",
+					"password"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"Pick_IUserEntity.Exclude_keyofIUserEntity.passwordHash__": {
+				"properties": {},
+				"type": "object",
+				"description": "From T, pick a set of properties whose keys are in the union K"
+			},
+			"Omit_IUserEntity.passwordHash_": {
+				"$ref": "#/components/schemas/Pick_IUserEntity.Exclude_keyofIUserEntity.passwordHash__",
+				"description": "Construct a type with the properties of T except for those in type K."
+			},
 			"HealthStatus": {
 				"description": "Response shape for the health check endpoint",
 				"properties": {
@@ -219,7 +294,7 @@
 						}
 					}
 				},
-				"description": "Create a new user",
+				"description": "Create a new user (đã bị auth.controller đảm nhiệm nhưng vẫn giữ lại theo code cũ form)",
 				"tags": [
 					"Users"
 				],
@@ -235,6 +310,47 @@
 						}
 					}
 				}
+			}
+		},
+		"/users/by-email/{email}": {
+			"get": {
+				"operationId": "GetUserByEmail",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"allOf": [
+										{
+											"$ref": "#/components/schemas/IUser"
+										}
+									],
+									"nullable": true
+								}
+							}
+						}
+					}
+				},
+				"description": "Get a single user by email\r\nAPI này tạo phụ để test nhanh việc get User bằng DB",
+				"tags": [
+					"Users"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "email",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
 			}
 		},
 		"/users/{userId}": {
@@ -369,6 +485,122 @@
 						}
 					}
 				]
+			}
+		},
+		"/auth/login": {
+			"post": {
+				"operationId": "Login",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"user": {
+											"$ref": "#/components/schemas/Record_string.any_"
+										},
+										"accessToken": {
+											"type": "string"
+										}
+									},
+									"required": [
+										"user",
+										"accessToken"
+									],
+									"type": "object"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized"
+					},
+					"422": {
+						"description": "Validation Failed",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ValidateError"
+								}
+							}
+						}
+					}
+				},
+				"description": "Xác thực thông tin người dùng và sinh chuỗi Token truy cập.",
+				"tags": [
+					"Authentication"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/LoginDTO"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/auth/register": {
+			"post": {
+				"operationId": "Register",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"user": {
+											"$ref": "#/components/schemas/Omit_IUserEntity.passwordHash_"
+										},
+										"message": {
+											"type": "string"
+										}
+									},
+									"required": [
+										"user",
+										"message"
+									],
+									"type": "object"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request - Email Exists"
+					},
+					"422": {
+						"description": "Validation Failed",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ValidateError"
+								}
+							}
+						}
+					}
+				},
+				"description": "Đăng kí tài khoản mới vào hệ thống.",
+				"tags": [
+					"Authentication"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/CreateUserDTO"
+							}
+						}
+					}
+				}
 			}
 		},
 		"/health": {

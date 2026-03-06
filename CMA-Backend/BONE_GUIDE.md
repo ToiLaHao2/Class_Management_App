@@ -135,6 +135,68 @@ npm install stripe -w libs/modules/payments
 
 ---
 
+## 🔒 Phần 4: Hướng Dẫn Bảo Mật API (Authentication & Authorization)
+
+Hệ thống cung cấp sẵn cơ chế xác thực JWT và Phân quyền (RBAC) tập trung thông qua `tsoa`. Bạn không cần phải tạo và gắn middleware thủ công vào từng Route của Express.
+
+### 1. Khóa Endpoint bằng JWT (Bắt buộc Đăng nhập)
+Để bắt buộc một API phải có auth token, bạn chỉ cần thêm Decorator `@Security('jwt')` vào ngay trên phương thức của Controller.
+
+```typescript
+import { Controller, Get, Route, Security } from '@tsoa/runtime';
+
+@Route('users')
+export class UsersController extends Controller {
+    @Security('jwt') // 👈 Chỉ thêm dòng này
+    @Get('profile')
+    public async getProfile() {
+        return { message: "Thông tin tuyệt mật" };
+    }
+}
+```
+
+### 2. Phân Quyền Theo Role (RBAC)
+Nếu API đó không chỉ cần Đăng nhập, mà còn yêu cầu Role cụ thể (Ví dụ: `admin` hoặc `teacher`), bạn hãy truyền thêm mảng chứa các quyền hạn (Scopes) vào.
+
+```typescript
+    @Security('jwt', ['admin']) // 👈 Yêu cầu token phải hợp lệ VÀ user phải mang role 'admin'
+    @Delete('{userId}')
+    public async deleteUser() {
+        return { message: "Đã xóa User thành công" };
+    }
+```
+
+### Cách Hoạt Động Của Hệ Thống:
+- Logic giải mã JWT và xét duyệt Role đã được viết sẵn tại: **`@core/http/src/authentication.ts`**.
+- Lỗi sẽ được tự động văng ra dưới dạng **HTTP 401 Unauthorized** cùng thông báo cụ thể (thiếu token, sai token, hoặc không đủ quyền) tại Error Handler của API Gateway.
+- Khi bạn gắn `@Security`, nút **Authorize 🔒** sẽ tự động xuất hiện trên trang API Docs (`/docs`), cho phép bạn dễ dàng dán token vào để test.
+
+---
+
+## 🏗️ Phần 5: Triết Lý Thiết Kế Module (DDD Light & Modular Monolith)
+
+Bone này được thiết kế theo tư duy **Domain-Driven Design (DDD) Thu Gọn** để tối ưu hóa khả năng Scale-up (mở rộng) mà không trở nên quá phức tạp. Mỗi thư mục trong `libs/modules/` là một Miền Nghiệp Vụ (Domain) độc lập.
+
+### Quy Trình Xử Lý Trong Một Module (3-Layer Trong 1 Domain):
+1. **Controller (`.controller.ts`):** Chỉ làm đúng 2 việc: Định nghĩa Route (`tsoa`) và Nhận/Trả dữ liệu (Validate DTO). Tránh tuyệt đối việc nhét Business Logic (nghiệp vụ) vào đây.
+2. **Service (`.service.ts`):** Chứa toàn bộ Business Logic. Nó xử lý logic, tính toán, và gọi kho chứa dữ liệu.
+3. **Repository (`.repo.ts`):** Nơi duy nhất gọi đến Database (Firebase, Postgres...). Nó trả về Object chuẩn hóa ẩn đi khái niệm Database.
+
+### 🔴 Quy Tắc Tối Kỵ (Anti-Patterns Cần Tránh)
+1. **Không Gọi Chéo Repository:** 
+   Ví dụ, `CoursesService` cần lấy thông tin Giảng viên từ bảng User. **Không được** để `CoursesService` gọi sang `UsersRepository`.
+   👉 *Cách đúng:* `CoursesService` phải gọi thông qua `UsersService` (hoặc bắn Event Message) để giữ nguyên vách ngăn Domain.
+2. **Không Require Thủ Công:** 
+   Không bao giờ dùng cú pháp `import { UsersService } from '../users'`. 
+   👉 *Cách đúng:* Inject qua `constructor` (nhờ Awilix) `constructor(private readonly usersService: IUsersService)`.
+3. **Không Rò Rỉ Biến Môi Trường:**
+   Đừng rải rác `process.env.ABC` khắp các Service.
+   👉 *Cách đúng:* Đọc biến `ABC` vào `appConfig` tại thư mục `@core/config` (đã được Zod validate), rồi import `appConfig` vào Service cần dùng.
+
+> **Tầm Nhìn Trưởng Thành:** Với kiến trúc này, khi hệ thống phình to, thay vì sửa 5 chỗ khác nhau khi tính năng "Khóa Học" đổi luật, bạn chỉ cần chui vào thư mục `courses/`. Nếu sau này phải bóc "Khóa học" ra thành một Microservice độc lập do quá tải, bạn chỉ việc "nhấc" đúng thư mục đó qua kho chứa mới là chạy!
+
+---
+
 ## ⚠️ Những Lưu Ý Xương Máu
 
 1. **Lỗi `Controller extends undefined`:**

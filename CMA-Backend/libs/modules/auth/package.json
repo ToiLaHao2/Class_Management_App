@@ -3,6 +3,17 @@
     "version": "1.0.0",
     "main": "src/index.ts",
     "dependencies": {
-        "@core/database": "*"
+        "@core/database": "*",
+        "@core/config": "*",
+        "@core/exceptions": "*",
+        "@modules/users": "*",
+        "jsonwebtoken": "^9.0.2",
+        "bcryptjs": "^2.4.3",
+        "tsoa": "*",
+        "reflect-metadata": "*"
+    },
+    "devDependencies": {
+        "@types/jsonwebtoken": "^9.0.7",
+        "@types/bcryptjs": "^2.4.6"
     }
 }

@@ -4,7 +4,11 @@
     "main": "src/index.ts",
     "private": true,
     "dependencies": {
-        "tsoa": "*",
-        "reflect-metadata": "*"
+        "bcryptjs": "^2.4.3",
+        "reflect-metadata": "*",
+        "tsoa": "*"
+    },
+    "devDependencies": {
+        "@types/bcryptjs": "^2.4.6"
     }
 }

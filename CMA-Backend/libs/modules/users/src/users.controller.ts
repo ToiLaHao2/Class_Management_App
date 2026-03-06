@@ -13,10 +13,17 @@ import {
     Security,
 } from '@tsoa/runtime';
 import type { IUser, CreateUserDTO, UpdateUserDTO } from './user.model';
+import { IUsersService } from './user.service';
 
 @Route('users')
 @Tags('Users')
 export class UsersController extends Controller {
+    private readonly usersService: IUsersService;
+
+    constructor({ usersService }: { usersService: IUsersService }) {
+        super();
+        this.usersService = usersService;
+    }
     /**
      * Get all users
      */
@@ -36,40 +43,40 @@ export class UsersController extends Controller {
     }
 
     /**
+     * Get a single user by email
+     * API này tạo phụ để test nhanh việc get User bằng DB
+     */
+    @Security('jwt')
+    @Get('by-email/{email}')
+    public async getUserByEmail(@Path() email: string): Promise<IUser | null> {
+        const user = await this.usersService.getUserByEmail(email);
+        if (!user) return null;
+        const { passwordHash: _, ...safeUser } = user;
+        return safeUser as unknown as IUser;
+    }
+
+    /**
      * Get a single user by ID
      * @param userId The user's unique identifier
      */
     @Security('jwt')
     @Get('{userId}')
     public async getUser(@Path() userId: string): Promise<IUser | null> {
-        // TODO: Integrate with UserService via DI
-        return {
-            id: userId,
-            email: 'student@cma.edu',
-            fullName: 'Nguyen Van A',
-            role: 'student',
-            createdAt: new Date(),
-            isDeleted: false,
-        };
+        const user = await this.usersService.getUserById(userId);
+        if (!user) return null;
+        const { passwordHash: _, ...safeUser } = user;
+        return safeUser as unknown as IUser;
     }
 
     /**
-     * Create a new user
+     * Create a new user (đã bị auth.controller đảm nhiệm nhưng vẫn giữ lại theo code cũ form)
      */
     @SuccessResponse('201', 'Created')
     @Post('/')
     public async createUser(@Body() body: CreateUserDTO): Promise<IUser> {
-        // TODO: Integrate with UserService via DI
+        const user = await this.usersService.createUser(body);
         this.setStatus(201);
-        return {
-            id: 'new-user-id',
-            email: body.email,
-            fullName: body.fullName,
-            role: body.role,
-            avatar: body.avatar,
-            createdAt: new Date(),
-            isDeleted: false,
-        };
+        return user as unknown as IUser;
     }
 
     /**
