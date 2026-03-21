@@ -21,6 +21,11 @@ export class FirebaseUsersRepository implements IUsersRepository {
         return doc as unknown as IUserEntity;
     }
 
+    async findAll(): Promise<IUserEntity[]> {
+        const snapshot = await this.collection.get();
+        return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as unknown as IUserEntity));
+    }
+
     async findByEmail(email: string): Promise<IUserEntity | null> {
         const snapshot = await this.collection.where('email', '==', email).limit(1).get();
         if (snapshot.empty) return null;

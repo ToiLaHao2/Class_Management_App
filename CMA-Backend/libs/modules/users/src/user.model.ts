@@ -5,7 +5,7 @@ export interface IUser {
     id: string;
     email: string;
     fullName: string;
-    role: 'student' | 'teacher' | 'admin';
+    role: 'student' | 'teacher' | 'parent' | 'admin';
     avatar?: string;
     createdAt: Date;
     // Mật khẩu đã mã hoá sẽ lưu dưới DB, không bao giờ lộ ra ngoài API (nên không đưa vào dto response)
@@ -34,6 +34,7 @@ export interface LoginDTO {
 export interface IUsersRepository {
     findById(id: string): Promise<IUserEntity | null>;
     findByEmail(email: string): Promise<IUserEntity | null>;
+    findAll(): Promise<IUserEntity[]>;
     create(data: Omit<IUserEntity, 'id' | 'createdAt' | 'isDeleted'>): Promise<IUserEntity>;
     update(id: string, partialData: Partial<IUserEntity>): Promise<IUserEntity>;
 }
@@ -45,7 +46,7 @@ export interface CreateUserDTO {
     email: string;
     password: string;
     fullName: string;
-    role: 'student' | 'teacher' | 'admin';
+    role: 'student' | 'teacher' | 'parent' | 'admin';
     avatar?: string;
 }
 
@@ -55,5 +56,5 @@ export interface CreateUserDTO {
 export interface UpdateUserDTO {
     fullName?: string;
     avatar?: string;
-    role?: 'student' | 'teacher' | 'admin';
+    role?: 'student' | 'teacher' | 'parent' | 'admin';
 }

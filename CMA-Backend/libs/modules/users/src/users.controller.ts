@@ -25,21 +25,13 @@ export class UsersController extends Controller {
         this.usersService = usersService;
     }
     /**
-     * Get all users
+     * Get all users (Admin only)
      */
+    @Security('jwt', ['admin'])
     @Get('/')
     public async getUsers(): Promise<IUser[]> {
-        // TODO: Integrate with UserService via DI
-        return [
-            {
-                id: 'demo-1',
-                email: 'student@cma.edu',
-                fullName: 'Nguyen Van A',
-                role: 'student',
-                createdAt: new Date(),
-                isDeleted: false,
-            },
-        ];
+        const users = await this.usersService.getAllUsers();
+        return users as unknown as IUser[];
     }
 
     /**
@@ -80,7 +72,7 @@ export class UsersController extends Controller {
     }
 
     /**
-     * Update a user
+     * Update a user (Admin only)
      * @param userId The user's unique identifier
      */
     @Security('jwt', ['admin'])
@@ -89,26 +81,17 @@ export class UsersController extends Controller {
         @Path() userId: string,
         @Body() body: UpdateUserDTO
     ): Promise<IUser> {
-        // TODO: Integrate with UserService via DI
-        return {
-            id: userId,
-            email: 'student@cma.edu',
-            fullName: body.fullName ?? 'Nguyen Van A',
-            role: body.role ?? 'student',
-            avatar: body.avatar,
-            createdAt: new Date(),
-            isDeleted: false,
-        };
+        const updated = await this.usersService.updateProfile(userId, body);
+        return updated as unknown as IUser;
     }
 
     /**
-     * Soft-delete a user
+     * Soft-delete a user (Admin only)
      * @param userId The user's unique identifier
      */
     @Security('jwt', ['admin'])
     @Delete('{userId}')
     public async deleteUser(@Path() userId: string): Promise<{ message: string }> {
-        // TODO: Integrate with UserService via DI
-        return { message: `User ${userId} has been deleted.` };
+        return this.usersService.softDeleteUser(userId);
     }
 }

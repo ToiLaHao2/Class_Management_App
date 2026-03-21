@@ -24,6 +24,7 @@
 						"enum": [
 							"student",
 							"teacher",
+							"parent",
 							"admin"
 						]
 					},
@@ -69,6 +70,7 @@
 						"enum": [
 							"student",
 							"teacher",
+							"parent",
 							"admin"
 						]
 					},
@@ -99,6 +101,7 @@
 						"enum": [
 							"student",
 							"teacher",
+							"parent",
 							"admin"
 						]
 					}
@@ -304,11 +307,17 @@
 						}
 					}
 				},
-				"description": "Get all users",
+				"description": "Get all users (Admin only)",
 				"tags": [
 					"Users"
 				],
-				"security": [],
+				"security": [
+					{
+						"jwt": [
+							"admin"
+						]
+					}
+				],
 				"parameters": []
 			},
 			"post": {
@@ -439,7 +448,7 @@
 						}
 					}
 				},
-				"description": "Update a user",
+				"description": "Update a user (Admin only)",
 				"tags": [
 					"Users"
 				],
@@ -494,7 +503,7 @@
 						}
 					}
 				},
-				"description": "Soft-delete a user",
+				"description": "Soft-delete a user (Admin only)",
 				"tags": [
 					"Users"
 				],
@@ -516,6 +525,60 @@
 						}
 					}
 				]
+			}
+		},
+		"/admin/stats": {
+			"get": {
+				"operationId": "GetDashboardStats",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"description": "Get combined dashboard stats (Users, Growth, etc.)",
+				"tags": [
+					"Admin"
+				],
+				"security": [
+					{
+						"jwt": [
+							"admin"
+						]
+					}
+				],
+				"parameters": []
+			}
+		},
+		"/admin/health": {
+			"get": {
+				"operationId": "GetSystemHealth",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"description": "Get system health and service status",
+				"tags": [
+					"Admin"
+				],
+				"security": [
+					{
+						"jwt": [
+							"admin"
+						]
+					}
+				],
+				"parameters": []
 			}
 		},
 		"/auth/login": {
