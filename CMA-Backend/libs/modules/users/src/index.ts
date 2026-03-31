@@ -2,7 +2,7 @@ import { IAppModule } from '@core/shared';
 import express, { Application, Request, Response } from 'express';
 import { AwilixContainer, asClass } from 'awilix';
 
-import { FirebaseUsersRepository } from './repositories/firebase.user.repo';
+import { PostgresUsersRepository } from './repositories/postgres.user.repo';
 import { UsersService } from './user.service';
 
 export * from './user.model';
@@ -17,7 +17,7 @@ class UsersModule implements IAppModule {
 
         // Đăng ký Dependencies vào IoC Container toàn cục
         container.register({
-            usersRepository: asClass(FirebaseUsersRepository).singleton(),
+            usersRepository: asClass(PostgresUsersRepository).singleton(),
             usersService: asClass(UsersService).singleton()
         });
 

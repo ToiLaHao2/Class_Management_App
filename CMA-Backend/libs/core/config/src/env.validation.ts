@@ -7,10 +7,20 @@ dotenv.config({ path: join(__dirname, '../../../../.env') });
 
 const envSchema = z.object({
     NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
-    PORT: z.string().transform(Number).default(3000),
+    PORT: z.string().default('3000').transform(Number),
 
     JWT_SECRET: z.string().min(10, 'JWT_SECRET is required and must be at least 10 chars'),
-    FIREBASE_CREDENTIALS: z.string().min(10, 'FIREBASE_CREDENTIALS JSON string is required'),
+
+    // Firebase (optional now — only needed if using Firebase adapter)
+    FIREBASE_CREDENTIALS: z.string().optional(),
+
+    // PostgreSQL
+    PG_HOST: z.string().default('localhost'),
+    PG_PORT: z.string().default('5432').transform(Number),
+    PG_DATABASE: z.string().default('cma_db'),
+    PG_USER: z.string().default('postgres'),
+    PG_PASSWORD: z.string().default(''),
+    PG_SSL: z.string().default('false').transform(val => val === 'true'),
 
     REDIS_HOST: z.string().optional(),
     REDIS_PORT: z.string().transform(val => val ? Number(val) : undefined).optional(),
@@ -20,9 +30,9 @@ const envSchema = z.object({
     CLOUDINARY_API_KEY: z.string().optional(),
     CLOUDINARY_API_SECRET: z.string().optional(),
 
-    RATE_LIMIT_WINDOW_MS: z.string().transform(Number).default(900000),    // 15 minutes
-    RATE_LIMIT_MAX: z.string().transform(Number).default(100),
-    RATE_LIMIT_AUTH_MAX: z.string().transform(Number).default(10),
+    RATE_LIMIT_WINDOW_MS: z.string().default('900000').transform(Number),    // 15 minutes
+    RATE_LIMIT_MAX: z.string().default('100').transform(Number),
+    RATE_LIMIT_AUTH_MAX: z.string().default('10').transform(Number),
 });
 
 const _env = envSchema.safeParse(process.env);
@@ -50,7 +60,17 @@ export const securityConfig = {
 } as const;
 
 export const databaseConfig = {
+    // Firebase (legacy/optional)
     credentials: envVars.FIREBASE_CREDENTIALS,
+    // PostgreSQL
+    pg: {
+        host: envVars.PG_HOST,
+        port: envVars.PG_PORT,
+        database: envVars.PG_DATABASE,
+        user: envVars.PG_USER,
+        password: envVars.PG_PASSWORD,
+        ssl: envVars.PG_SSL,
+    },
 } as const;
 
 export const cacheConfig = {

@@ -16,7 +16,7 @@ export interface HealthStatus {
     timestamp: string;
     services: {
         redis: 'connected' | 'disconnected';
-        firebase: 'connected' | 'disconnected';
+        database: 'connected' | 'disconnected';
         cloudinary: 'configured' | 'not_configured';
     };
 }
@@ -40,16 +40,16 @@ export class HealthController extends Controller {
             ? 'configured'
             : 'not_configured';
 
-        // Firebase: if container resolved without throwing, it's connected
-        let firebaseStatus: 'connected' | 'disconnected' = 'disconnected';
+        // Database: check if the db adapter was resolved and is connected
+        let dbStatus: 'connected' | 'disconnected' = 'disconnected';
         try {
-            container.resolve('db');
-            firebaseStatus = 'connected';
+            const db = container.resolve<{ isConnected: () => boolean }>('db');
+            dbStatus = db.isConnected() ? 'connected' : 'disconnected';
         } catch {
-            firebaseStatus = 'disconnected';
+            dbStatus = 'disconnected';
         }
 
-        const isHealthy = redisStatus === 'connected' && firebaseStatus === 'connected';
+        const isHealthy = redisStatus === 'connected' && dbStatus === 'connected';
 
         if (!isHealthy) {
             this.setStatus(503);
@@ -61,7 +61,7 @@ export class HealthController extends Controller {
             timestamp: new Date().toISOString(),
             services: {
                 redis: redisStatus,
-                firebase: firebaseStatus,
+                database: dbStatus,
                 cloudinary: cloudinaryStatus,
             },
         };

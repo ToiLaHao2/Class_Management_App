@@ -22,6 +22,7 @@
     "@types/express": "^5.0.6",
     "@types/lru-cache": "^7.10.9",
     "@types/node": "^25.3.3",
+    "@types/pg": "^8.20.0",
     "concurrently": "^8.0.0",
     "nodemon": "^3.0.0",
     "tsx": "^4.21.0",
@@ -30,6 +31,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "pg": "^8.20.0",
     "reflect-metadata": "^0.2.2",
     "tsoa": "^7.0.0-alpha.0"
   }

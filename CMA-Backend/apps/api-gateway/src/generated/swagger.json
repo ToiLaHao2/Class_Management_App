@@ -238,7 +238,7 @@
 									"not_configured"
 								]
 							},
-							"firebase": {
+							"database": {
 								"type": "string",
 								"enum": [
 									"connected",
@@ -255,7 +255,7 @@
 						},
 						"required": [
 							"cloudinary",
-							"firebase",
+							"database",
 							"redis"
 						],
 						"type": "object"
@@ -838,7 +838,7 @@
 						}
 					}
 				},
-				"description": "System health check — verifies connectivity of all core dependencies.\r\nUsed by deployment platforms (Render, Railway, AWS ECS) to determine app status.",
+				"description": "System health check — verifies connectivity of all core dependencies.\nUsed by deployment platforms (Render, Railway, AWS ECS) to determine app status.",
 				"tags": [
 					"System"
 				],

@@ -127,7 +127,7 @@ const models: TsoaRoute.Models = {
             "status": {"dataType":"union","subSchemas":[{"dataType":"enum","enums":["healthy"]},{"dataType":"enum","enums":["degraded"]}],"required":true},
             "uptime": {"dataType":"double","required":true},
             "timestamp": {"dataType":"string","required":true},
-            "services": {"dataType":"nestedObjectLiteral","nestedProperties":{"cloudinary":{"dataType":"union","subSchemas":[{"dataType":"enum","enums":["configured"]},{"dataType":"enum","enums":["not_configured"]}],"required":true},"firebase":{"dataType":"union","subSchemas":[{"dataType":"enum","enums":["connected"]},{"dataType":"enum","enums":["disconnected"]}],"required":true},"redis":{"dataType":"union","subSchemas":[{"dataType":"enum","enums":["connected"]},{"dataType":"enum","enums":["disconnected"]}],"required":true}},"required":true},
+            "services": {"dataType":"nestedObjectLiteral","nestedProperties":{"cloudinary":{"dataType":"union","subSchemas":[{"dataType":"enum","enums":["configured"]},{"dataType":"enum","enums":["not_configured"]}],"required":true},"database":{"dataType":"union","subSchemas":[{"dataType":"enum","enums":["connected"]},{"dataType":"enum","enums":["disconnected"]}],"required":true},"redis":{"dataType":"union","subSchemas":[{"dataType":"enum","enums":["connected"]},{"dataType":"enum","enums":["disconnected"]}],"required":true}},"required":true},
         },
         "additionalProperties": false,
     },
