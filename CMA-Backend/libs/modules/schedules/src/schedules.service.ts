@@ -1,9 +1,8 @@
 import {
-    ISchedulesRepository, ILessonLogsRepository, IAttachmentsRepository,
-    ISchedule, ILessonLog, IAttachment,
+    ISchedulesRepository, ILessonLogsRepository,
+    ISchedule, ILessonLog,
     CreateScheduleDTO, UpdateScheduleDTO,
-    CreateLessonLogDTO, BulkAttendanceDTO,
-    CreateAttachmentDTO
+    CreateLessonLogDTO, BulkAttendanceDTO
 } from './schedules.model';
 import { NotFoundError } from '@core/exceptions';
 
@@ -20,29 +19,20 @@ export interface ISchedulesService {
     markAttendance(scheduleId: string, data: CreateLessonLogDTO): Promise<ILessonLog>;
     bulkMarkAttendance(scheduleId: string, data: BulkAttendanceDTO): Promise<ILessonLog[]>;
 
-    // Attachments
-    getAttachments(refType: string, refId: string): Promise<IAttachment[]>;
-    addAttachment(userId: string, data: CreateAttachmentDTO): Promise<IAttachment>;
-    removeAttachment(id: string): Promise<{ message: string }>;
 }
 
 export class SchedulesService implements ISchedulesService {
     private schedulesRepo: ISchedulesRepository;
     private lessonLogsRepo: ILessonLogsRepository;
-    private attachmentsRepo: IAttachmentsRepository;
-
     constructor({
         schedulesRepository,
         lessonLogsRepository,
-        attachmentsRepository,
     }: {
         schedulesRepository: ISchedulesRepository;
         lessonLogsRepository: ILessonLogsRepository;
-        attachmentsRepository: IAttachmentsRepository;
     }) {
         this.schedulesRepo = schedulesRepository;
         this.lessonLogsRepo = lessonLogsRepository;
-        this.attachmentsRepo = attachmentsRepository;
     }
 
     // ===================== SCHEDULES =====================
@@ -103,27 +93,4 @@ export class SchedulesService implements ISchedulesService {
         return this.lessonLogsRepo.bulkUpsert(scheduleId, data.logs);
     }
 
-    // ===================== ATTACHMENTS =====================
-
-    async getAttachments(refType: string, refId: string): Promise<IAttachment[]> {
-        return this.attachmentsRepo.findByRef(refType, refId);
-    }
-
-    async addAttachment(userId: string, data: CreateAttachmentDTO): Promise<IAttachment> {
-        return this.attachmentsRepo.create({
-            ref_type: data.ref_type,
-            ref_id: data.ref_id,
-            file_url: data.file_url,
-            file_name: data.file_name,
-            file_type: data.file_type,
-            file_size: data.file_size,
-            uploaded_by: userId,
-        });
-    }
-
-    async removeAttachment(id: string): Promise<{ message: string }> {
-        const deleted = await this.attachmentsRepo.delete(id);
-        if (!deleted) throw new NotFoundError('Tệp đính kèm không tồn tại');
-        return { message: 'Đã xóa tệp đính kèm' };
-    }
 }

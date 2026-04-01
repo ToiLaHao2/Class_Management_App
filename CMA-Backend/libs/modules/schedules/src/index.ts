@@ -6,7 +6,6 @@ import { Pool } from 'pg';
 import {
     PostgresSchedulesRepository,
     PostgresLessonLogsRepository,
-    PostgresAttachmentsRepository,
 } from './repositories/postgres.schedules.repo';
 import { SchedulesService } from './schedules.service';
 import { SCHEDULES_MIGRATION } from './schedules.migration';
@@ -25,14 +24,13 @@ class SchedulesModule implements IAppModule {
         const pool = db.getDB();
         if (pool) {
             pool.query(SCHEDULES_MIGRATION)
-                .then(() => console.log('✅ [Schedules] Tables ready (schedules, lesson_logs, attachments).'))
+                .then(() => console.log('✅ [Schedules] Tables ready (schedules, lesson_logs).'))
                 .catch((err: Error) => console.error('❌ [Schedules] Migration error:', err.message));
         }
 
         container.register({
             schedulesRepository: asClass(PostgresSchedulesRepository).singleton(),
             lessonLogsRepository: asClass(PostgresLessonLogsRepository).singleton(),
-            attachmentsRepository: asClass(PostgresAttachmentsRepository).singleton(),
             schedulesService: asClass(SchedulesService).singleton(),
         });
 
@@ -40,7 +38,7 @@ class SchedulesModule implements IAppModule {
             res.json({
                 module: this.name,
                 status: 'ok',
-                tables: ['schedules', 'lesson_logs', 'attachments'],
+                tables: ['schedules', 'lesson_logs'],
             });
         });
 

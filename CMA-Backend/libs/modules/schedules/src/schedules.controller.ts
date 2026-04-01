@@ -4,10 +4,9 @@ import {
 } from '@tsoa/runtime';
 import { ISchedulesService } from './schedules.service';
 import {
-    ISchedule, ILessonLog, IAttachment,
+    ISchedule, ILessonLog,
     CreateScheduleDTO, UpdateScheduleDTO,
-    CreateLessonLogDTO, BulkAttendanceDTO,
-    CreateAttachmentDTO
+    CreateLessonLogDTO, BulkAttendanceDTO
 } from './schedules.model';
 
 interface RequestWithUser {
@@ -99,47 +98,5 @@ export class SchedulesController extends Controller {
     public async bulkAttendance(@Path() id: string, @Body() body: BulkAttendanceDTO): Promise<ILessonLog[]> {
         this.setStatus(201);
         return this.schedulesService.bulkMarkAttendance(id, body);
-    }
-}
-
-// ===================== ATTACHMENTS (Dùng chung) =====================
-
-@Route('attachments')
-@Tags('Attachments')
-export class AttachmentsController extends Controller {
-    private readonly schedulesService: ISchedulesService;
-
-    constructor({ schedulesService }: { schedulesService: ISchedulesService }) {
-        super();
-        this.schedulesService = schedulesService;
-    }
-
-    /** Lấy tệp đính kèm theo loại và ID gốc */
-    @Security('jwt')
-    @Get('/')
-    public async getAttachments(
-        @Query() ref_type: string,
-        @Query() ref_id: string,
-    ): Promise<IAttachment[]> {
-        return this.schedulesService.getAttachments(ref_type, ref_id);
-    }
-
-    /** Upload/Đăng ký tệp đính kèm mới */
-    @Security('jwt')
-    @SuccessResponse('201', 'Created')
-    @Post('/')
-    public async addAttachment(
-        @Request() req: RequestWithUser,
-        @Body() body: CreateAttachmentDTO,
-    ): Promise<IAttachment> {
-        this.setStatus(201);
-        return this.schedulesService.addAttachment(req.user.id, body);
-    }
-
-    /** Xóa tệp đính kèm */
-    @Security('jwt')
-    @Delete('{id}')
-    public async removeAttachment(@Path() id: string): Promise<{ message: string }> {
-        return this.schedulesService.removeAttachment(id);
     }
 }

@@ -1,18 +1,13 @@
 import { v2 as cloudinary, UploadApiResponse } from 'cloudinary';
 import { Readable } from 'stream';
 import { storageConfig } from '@core/config';
+import { IStorageProvider, UploadResult } from '../interfaces';
 
-interface UploadResult {
-    url: string;
-    publicId: string;
-    width: number;
-    height: number;
-}
-
-class CloudinaryAdapter {
+export class CloudinaryAdapter implements IStorageProvider {
     private _connected: boolean = false;
+    public readonly providerName = 'cloudinary';
 
-    connect(): void {
+    public connect(): void {
         if (this._connected) return;
 
         const { cloudName, apiKey, apiSecret } = storageConfig;
@@ -37,7 +32,7 @@ class CloudinaryAdapter {
 
         return new Promise((resolve, reject) => {
             const uploadStream = cloudinary.uploader.upload_stream(
-                { folder },
+                { folder, resource_type: 'image' },
                 (error, result) => {
                     if (error) return reject(error);
                     const res = result as UploadApiResponse;
@@ -45,7 +40,8 @@ class CloudinaryAdapter {
                         url: res.secure_url,
                         publicId: res.public_id,
                         width: res.width,
-                        height: res.height
+                        height: res.height,
+                        provider: this.providerName
                     });
                 }
             );
@@ -57,9 +53,40 @@ class CloudinaryAdapter {
         });
     }
 
-    async deleteImage(publicId: string): Promise<unknown> {
+    async uploadFileFromBuffer(buffer: Buffer, originalName: string, mimeType: string, folder: string = 'cma_files'): Promise<UploadResult> {
         if (!this._connected) this.connect();
-        return cloudinary.uploader.destroy(publicId);
+        
+        // Cloudinary tự động check mimeType qua resource_type: 'auto'
+        return new Promise((resolve, reject) => {
+            const uploadStream = cloudinary.uploader.upload_stream(
+                { folder, resource_type: 'auto', public_id: originalName.split('.')[0] },
+                (error, result) => {
+                    if (error) return reject(error);
+                    const res = result as UploadApiResponse;
+                    resolve({
+                        url: res.secure_url,
+                        publicId: res.public_id,
+                        provider: this.providerName
+                    });
+                }
+            );
+
+            const bufferStream = new Readable();
+            bufferStream.push(buffer);
+            bufferStream.push(null);
+            bufferStream.pipe(uploadStream);
+        });
+    }
+
+    async deleteFile(publicId: string): Promise<boolean> {
+        if (!this._connected) this.connect();
+        const res = await cloudinary.uploader.destroy(publicId);
+        return res.result === 'ok';
+    }
+
+    // Tương thích ngược
+    async deleteImage(publicId: string): Promise<unknown> {
+        return this.deleteFile(publicId);
     }
 }
 

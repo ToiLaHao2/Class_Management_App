@@ -61,31 +61,6 @@ export interface BulkAttendanceDTO {
     logs: CreateLessonLogDTO[];
 }
 
-// ===================== ATTACHMENTS (Dùng chung nhiều module) =====================
-
-export interface IAttachment {
-    id: string;
-    ref_type: string;          // 'schedule' | 'lesson' | 'assignment' | 'submission' ...
-    ref_id: string;            // UUID của record gốc
-    file_url: string;
-    file_name?: string;
-    file_type?: string;        // "pdf", "docx", "image/png"
-    file_size?: number;        // bytes
-    uploaded_by?: string;      // → users.id
-    created_at: Date;
-}
-
-export interface CreateAttachmentDTO {
-    ref_type: string;
-    ref_id: string;
-    file_url: string;
-    file_name?: string;
-    file_type?: string;
-    file_size?: number;
-}
-
-// ===================== REPOSITORY INTERFACES =====================
-
 export interface ISchedulesRepository {
     findByClassId(classId: string): Promise<ISchedule[]>;
     findById(id: string): Promise<ISchedule | null>;
@@ -98,10 +73,4 @@ export interface ILessonLogsRepository {
     findByScheduleId(scheduleId: string): Promise<ILessonLog[]>;
     upsertLog(scheduleId: string, studentId: string, status: boolean, comment?: string): Promise<ILessonLog>;
     bulkUpsert(scheduleId: string, logs: { student_id: string; attendance_status: boolean; student_comment?: string }[]): Promise<ILessonLog[]>;
-}
-
-export interface IAttachmentsRepository {
-    findByRef(refType: string, refId: string): Promise<IAttachment[]>;
-    create(data: Record<string, unknown>): Promise<IAttachment>;
-    delete(id: string): Promise<boolean>;
 }

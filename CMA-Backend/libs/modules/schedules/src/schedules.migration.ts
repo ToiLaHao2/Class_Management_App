@@ -33,19 +33,5 @@ export const SCHEDULES_MIGRATION = `
 
     CREATE INDEX IF NOT EXISTS idx_ll_schedule ON lesson_logs(schedule_id);
     CREATE INDEX IF NOT EXISTS idx_ll_student ON lesson_logs(student_id);
-
-    -- 3. Bảng Attachments dùng chung (Polymorphic)
-    CREATE TABLE IF NOT EXISTS "attachments" (
-        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-        ref_type TEXT NOT NULL,
-        ref_id UUID NOT NULL,
-        file_url TEXT NOT NULL,
-        file_name TEXT,
-        file_type TEXT,
-        file_size INTEGER,
-        uploaded_by UUID REFERENCES users(id) ON DELETE SET NULL,
-        created_at TIMESTAMPTZ DEFAULT NOW()
-    );
-
-    CREATE INDEX IF NOT EXISTS idx_att_ref ON attachments(ref_type, ref_id);
 `;
+
