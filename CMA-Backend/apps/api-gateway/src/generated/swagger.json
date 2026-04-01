@@ -188,6 +188,255 @@
 				"type": "object",
 				"additionalProperties": false
 			},
+			"ISchedule": {
+				"description": "Schedules Module — TypeScript Interfaces & DTOs\nBao gồm: schedules, lesson_logs, attachments",
+				"properties": {
+					"id": {
+						"type": "string"
+					},
+					"class_id": {
+						"type": "string"
+					},
+					"title": {
+						"type": "string"
+					},
+					"date": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"start_time": {
+						"type": "string"
+					},
+					"end_time": {
+						"type": "string"
+					},
+					"room": {
+						"type": "string"
+					},
+					"status": {
+						"type": "string"
+					},
+					"content_summary": {
+						"type": "string"
+					},
+					"created_at": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"updated_at": {
+						"type": "string",
+						"format": "date-time"
+					}
+				},
+				"required": [
+					"id",
+					"class_id",
+					"title",
+					"date",
+					"created_at",
+					"updated_at"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"CreateScheduleDTO": {
+				"properties": {
+					"title": {
+						"type": "string"
+					},
+					"date": {
+						"type": "string"
+					},
+					"start_time": {
+						"type": "string"
+					},
+					"end_time": {
+						"type": "string"
+					},
+					"room": {
+						"type": "string"
+					},
+					"status": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"title",
+					"date"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"UpdateScheduleDTO": {
+				"properties": {
+					"title": {
+						"type": "string"
+					},
+					"date": {
+						"type": "string"
+					},
+					"start_time": {
+						"type": "string"
+					},
+					"end_time": {
+						"type": "string"
+					},
+					"room": {
+						"type": "string"
+					},
+					"status": {
+						"type": "string"
+					},
+					"content_summary": {
+						"type": "string"
+					}
+				},
+				"type": "object",
+				"additionalProperties": false
+			},
+			"ILessonLog": {
+				"properties": {
+					"id": {
+						"type": "string"
+					},
+					"schedule_id": {
+						"type": "string"
+					},
+					"student_id": {
+						"type": "string"
+					},
+					"attendance_status": {
+						"type": "boolean"
+					},
+					"student_comment": {
+						"type": "string"
+					},
+					"created_at": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"updated_at": {
+						"type": "string",
+						"format": "date-time"
+					}
+				},
+				"required": [
+					"id",
+					"schedule_id",
+					"student_id",
+					"attendance_status",
+					"created_at",
+					"updated_at"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"CreateLessonLogDTO": {
+				"properties": {
+					"student_id": {
+						"type": "string"
+					},
+					"attendance_status": {
+						"type": "boolean"
+					},
+					"student_comment": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"student_id",
+					"attendance_status"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"BulkAttendanceDTO": {
+				"properties": {
+					"logs": {
+						"items": {
+							"$ref": "#/components/schemas/CreateLessonLogDTO"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"logs"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"IAttachment": {
+				"properties": {
+					"id": {
+						"type": "string"
+					},
+					"ref_type": {
+						"type": "string"
+					},
+					"ref_id": {
+						"type": "string"
+					},
+					"file_url": {
+						"type": "string"
+					},
+					"file_name": {
+						"type": "string"
+					},
+					"file_type": {
+						"type": "string"
+					},
+					"file_size": {
+						"type": "number",
+						"format": "double"
+					},
+					"uploaded_by": {
+						"type": "string"
+					},
+					"created_at": {
+						"type": "string",
+						"format": "date-time"
+					}
+				},
+				"required": [
+					"id",
+					"ref_type",
+					"ref_id",
+					"file_url",
+					"created_at"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"CreateAttachmentDTO": {
+				"properties": {
+					"ref_type": {
+						"type": "string"
+					},
+					"ref_id": {
+						"type": "string"
+					},
+					"file_url": {
+						"type": "string"
+					},
+					"file_name": {
+						"type": "string"
+					},
+					"file_type": {
+						"type": "string"
+					},
+					"file_size": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"ref_type",
+					"ref_id",
+					"file_url"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
 			"ITeacherProfile": {
 				"description": "Profiles Model — TypeScript Interfaces & DTOs",
 				"properties": {
@@ -1475,6 +1724,487 @@
 					}
 				],
 				"parameters": []
+			}
+		},
+		"/classes/{classId}/schedules": {
+			"get": {
+				"operationId": "GetSchedules",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/ISchedule"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"description": "Lấy toàn bộ lịch dạy của lớp",
+				"tags": [
+					"Schedules"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "classId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			},
+			"post": {
+				"operationId": "CreateSchedule",
+				"responses": {
+					"201": {
+						"description": "Created",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ISchedule"
+								}
+							}
+						}
+					}
+				},
+				"description": "Tạo lịch dạy mới",
+				"tags": [
+					"Schedules"
+				],
+				"security": [
+					{
+						"jwt": [
+							"teacher",
+							"admin"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "classId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/CreateScheduleDTO"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/schedules/{id}": {
+			"get": {
+				"operationId": "GetSchedule",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ISchedule"
+								}
+							}
+						}
+					}
+				},
+				"description": "Xem chi tiết lịch",
+				"tags": [
+					"Schedules"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			},
+			"put": {
+				"operationId": "UpdateSchedule",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ISchedule"
+								}
+							}
+						}
+					}
+				},
+				"description": "Cập nhật lịch (đổi giờ, phòng, nội dung buổi học)",
+				"tags": [
+					"Schedules"
+				],
+				"security": [
+					{
+						"jwt": [
+							"teacher",
+							"admin"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/UpdateScheduleDTO"
+							}
+						}
+					}
+				}
+			},
+			"delete": {
+				"operationId": "DeleteSchedule",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"message": {
+											"type": "string"
+										}
+									},
+									"required": [
+										"message"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"description": "Xóa lịch",
+				"tags": [
+					"Schedules"
+				],
+				"security": [
+					{
+						"jwt": [
+							"teacher",
+							"admin"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/schedules/{id}/attendance": {
+			"get": {
+				"operationId": "GetAttendance",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/ILessonLog"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"description": "Lấy danh sách điểm danh của buổi học",
+				"tags": [
+					"Schedules"
+				],
+				"security": [
+					{
+						"jwt": [
+							"teacher",
+							"admin"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			},
+			"post": {
+				"operationId": "MarkAttendance",
+				"responses": {
+					"201": {
+						"description": "Created",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ILessonLog"
+								}
+							}
+						}
+					}
+				},
+				"description": "Điểm danh 1 học sinh",
+				"tags": [
+					"Schedules"
+				],
+				"security": [
+					{
+						"jwt": [
+							"teacher",
+							"admin"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/CreateLessonLogDTO"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/schedules/{id}/attendance/bulk": {
+			"post": {
+				"operationId": "BulkAttendance",
+				"responses": {
+					"201": {
+						"description": "Created",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/ILessonLog"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"description": "Điểm danh hàng loạt cả lớp (Bulk) — Dành cho gia sư dạy tại chỗ",
+				"tags": [
+					"Schedules"
+				],
+				"security": [
+					{
+						"jwt": [
+							"teacher",
+							"admin"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/BulkAttendanceDTO"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/attachments": {
+			"get": {
+				"operationId": "GetAttachments",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/IAttachment"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"description": "Lấy tệp đính kèm theo loại và ID gốc",
+				"tags": [
+					"Attachments"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "ref_type",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "ref_id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			},
+			"post": {
+				"operationId": "AddAttachment",
+				"responses": {
+					"201": {
+						"description": "Created",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IAttachment"
+								}
+							}
+						}
+					}
+				},
+				"description": "Upload/Đăng ký tệp đính kèm mới",
+				"tags": [
+					"Attachments"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/CreateAttachmentDTO"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/attachments/{id}": {
+			"delete": {
+				"operationId": "RemoveAttachment",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"message": {
+											"type": "string"
+										}
+									},
+									"required": [
+										"message"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"description": "Xóa tệp đính kèm",
+				"tags": [
+					"Attachments"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
 			}
 		},
 		"/profiles/me": {
