@@ -16,7 +16,7 @@ export interface ITeacherProfile {
 
 export interface UpsertTeacherProfileDTO {
     bio?: string;
-    subjects?: string;
+    subject_ids?: string[];
     experience?: string;
 }
 
@@ -64,7 +64,7 @@ export interface UpsertStudentProfileDTO {
 // === REPOSITORY INTERFACE ===
 export interface IProfilesRepository {
     getTeacher(userId: string): Promise<ITeacherProfile | null>;
-    upsertTeacher(userId: string, data: UpsertTeacherProfileDTO): Promise<ITeacherProfile>;
+    upsertTeacher(userId: string, data: { bio?: string, subjects?: string, experience?: string }): Promise<ITeacherProfile>;
 
     getParent(userId: string): Promise<IParentProfile | null>;
     upsertParent(userId: string, data?: UpsertParentProfileDTO): Promise<IParentProfile>;

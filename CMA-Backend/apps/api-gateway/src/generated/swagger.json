@@ -783,6 +783,292 @@
 				"type": "object",
 				"additionalProperties": false
 			},
+			"IAssignment": {
+				"description": "Assignments Module — TypeScript Interfaces & DTOs",
+				"properties": {
+					"id": {
+						"type": "string"
+					},
+					"class_id": {
+						"type": "string"
+					},
+					"title": {
+						"type": "string"
+					},
+					"description": {
+						"type": "string"
+					},
+					"deadline": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"created_at": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"updated_at": {
+						"type": "string",
+						"format": "date-time"
+					}
+				},
+				"required": [
+					"id",
+					"class_id",
+					"title",
+					"created_at",
+					"updated_at"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"CreateAssignmentDTO": {
+				"properties": {
+					"title": {
+						"type": "string"
+					},
+					"description": {
+						"type": "string"
+					},
+					"deadline": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"title"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"UpdateAssignmentDTO": {
+				"properties": {
+					"title": {
+						"type": "string"
+					},
+					"description": {
+						"type": "string"
+					},
+					"deadline": {
+						"type": "string"
+					}
+				},
+				"type": "object",
+				"additionalProperties": false
+			},
+			"IAssignmentQuestion": {
+				"properties": {
+					"id": {
+						"type": "string"
+					},
+					"assignment_id": {
+						"type": "string"
+					},
+					"question_id": {
+						"type": "string"
+					},
+					"order_index": {
+						"type": "number",
+						"format": "double"
+					},
+					"created_at": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"updated_at": {
+						"type": "string",
+						"format": "date-time"
+					}
+				},
+				"required": [
+					"id",
+					"assignment_id",
+					"question_id",
+					"order_index",
+					"created_at",
+					"updated_at"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"LinkQuestionDTO": {
+				"properties": {
+					"question_id": {
+						"type": "string"
+					},
+					"order_index": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"question_id"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"IStudentSubmission": {
+				"properties": {
+					"id": {
+						"type": "string"
+					},
+					"assignment_id": {
+						"type": "string"
+					},
+					"student_id": {
+						"type": "string"
+					},
+					"grade": {
+						"type": "number",
+						"format": "double"
+					},
+					"status": {
+						"type": "string"
+					},
+					"feedback": {
+						"type": "string"
+					},
+					"submission_data": {
+						"$ref": "#/components/schemas/Record_string.any_"
+					},
+					"submission_date": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"created_at": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"updated_at": {
+						"type": "string",
+						"format": "date-time"
+					}
+				},
+				"required": [
+					"id",
+					"assignment_id",
+					"student_id",
+					"created_at",
+					"updated_at"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"SubmitAssignmentDTO": {
+				"properties": {
+					"submission_data": {
+						"$ref": "#/components/schemas/Record_string.any_"
+					}
+				},
+				"required": [
+					"submission_data"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"Record_string.string_": {
+				"properties": {},
+				"additionalProperties": {
+					"type": "string"
+				},
+				"type": "object",
+				"description": "Construct a type with a set of properties K of type T"
+			},
+			"IQuestion": {
+				"properties": {
+					"id": {
+						"type": "string"
+					},
+					"teacher_id": {
+						"type": "string"
+					},
+					"question_text": {
+						"type": "string"
+					},
+					"options": {
+						"$ref": "#/components/schemas/Record_string.string_"
+					},
+					"correct_answer": {
+						"type": "string"
+					},
+					"question_type": {
+						"type": "string"
+					},
+					"created_at": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"updated_at": {
+						"type": "string",
+						"format": "date-time"
+					}
+				},
+				"required": [
+					"id",
+					"teacher_id",
+					"question_text",
+					"created_at",
+					"updated_at"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"CreateQuestionDTO": {
+				"properties": {
+					"question_text": {
+						"type": "string"
+					},
+					"options": {
+						"$ref": "#/components/schemas/Record_string.string_"
+					},
+					"correct_answer": {
+						"type": "string"
+					},
+					"question_type": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"question_text"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"UpdateQuestionDTO": {
+				"properties": {
+					"question_text": {
+						"type": "string"
+					},
+					"options": {
+						"$ref": "#/components/schemas/Record_string.string_"
+					},
+					"correct_answer": {
+						"type": "string"
+					},
+					"question_type": {
+						"type": "string"
+					}
+				},
+				"type": "object",
+				"additionalProperties": false
+			},
+			"GradeSubmissionDTO": {
+				"properties": {
+					"grade": {
+						"type": "number",
+						"format": "double"
+					},
+					"feedback": {
+						"type": "string"
+					},
+					"status": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"grade"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
 			"HealthStatus": {
 				"description": "Response shape for the health check endpoint",
 				"properties": {
@@ -2451,6 +2737,642 @@
 						"application/json": {
 							"schema": {
 								"$ref": "#/components/schemas/ChangePasswordDTO"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/classes/{classId}/assignments": {
+			"get": {
+				"operationId": "GetAssignments",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/IAssignment"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Assignments"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "classId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			},
+			"post": {
+				"operationId": "CreateAssignment",
+				"responses": {
+					"201": {
+						"description": "Created",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IAssignment"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Assignments"
+				],
+				"security": [
+					{
+						"jwt": [
+							"teacher",
+							"admin"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "classId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/CreateAssignmentDTO"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/assignments/{id}": {
+			"get": {
+				"operationId": "GetAssignment",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IAssignment"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Assignments"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			},
+			"put": {
+				"operationId": "UpdateAssignment",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IAssignment"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Assignments"
+				],
+				"security": [
+					{
+						"jwt": [
+							"teacher",
+							"admin"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/UpdateAssignmentDTO"
+							}
+						}
+					}
+				}
+			},
+			"delete": {
+				"operationId": "DeleteAssignment",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"message": {
+											"type": "string"
+										}
+									},
+									"required": [
+										"message"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Assignments"
+				],
+				"security": [
+					{
+						"jwt": [
+							"teacher",
+							"admin"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/assignments/{id}/questions": {
+			"get": {
+				"operationId": "GetAssignmentQuestions",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/IAssignmentQuestion"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Assignments"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			},
+			"post": {
+				"operationId": "LinkQuestion",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IAssignmentQuestion"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Assignments"
+				],
+				"security": [
+					{
+						"jwt": [
+							"teacher",
+							"admin"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/LinkQuestionDTO"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/assignments/{id}/questions/{questionId}": {
+			"delete": {
+				"operationId": "UnlinkQuestion",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"message": {
+											"type": "string"
+										}
+									},
+									"required": [
+										"message"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Assignments"
+				],
+				"security": [
+					{
+						"jwt": [
+							"teacher",
+							"admin"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "path",
+						"name": "questionId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/assignments/{id}/submissions": {
+			"get": {
+				"operationId": "GetSubmissions",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/IStudentSubmission"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Assignments"
+				],
+				"security": [
+					{
+						"jwt": [
+							"teacher",
+							"admin"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			},
+			"post": {
+				"operationId": "SubmitAssignment",
+				"responses": {
+					"201": {
+						"description": "Submitted",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IStudentSubmission"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Assignments"
+				],
+				"security": [
+					{
+						"jwt": [
+							"student"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/SubmitAssignmentDTO"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/questions/mine": {
+			"get": {
+				"operationId": "GetMyQuestions",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/IQuestion"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Questions Bank"
+				],
+				"security": [
+					{
+						"jwt": [
+							"teacher",
+							"admin"
+						]
+					}
+				],
+				"parameters": []
+			}
+		},
+		"/questions/{id}": {
+			"get": {
+				"operationId": "GetQuestion",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IQuestion"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Questions Bank"
+				],
+				"security": [
+					{
+						"jwt": [
+							"teacher",
+							"admin"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			},
+			"put": {
+				"operationId": "UpdateQuestion",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IQuestion"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Questions Bank"
+				],
+				"security": [
+					{
+						"jwt": [
+							"teacher",
+							"admin"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/UpdateQuestionDTO"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/questions": {
+			"post": {
+				"operationId": "CreateQuestion",
+				"responses": {
+					"201": {
+						"description": "Created",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IQuestion"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Questions Bank"
+				],
+				"security": [
+					{
+						"jwt": [
+							"teacher",
+							"admin"
+						]
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/CreateQuestionDTO"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/submissions/{id}/grade": {
+			"put": {
+				"operationId": "GradeSubmission",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IStudentSubmission"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Submissions Grading"
+				],
+				"security": [
+					{
+						"jwt": [
+							"teacher",
+							"admin"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/GradeSubmissionDTO"
 							}
 						}
 					}

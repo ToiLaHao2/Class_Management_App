@@ -72,7 +72,7 @@ export class PostgresProfilesRepository implements IProfilesRepository {
         return rows.length > 0 ? this.mapTeacher(rows[0]) : null;
     }
 
-    async upsertTeacher(userId: string, data: UpsertTeacherProfileDTO): Promise<ITeacherProfile> {
+    async upsertTeacher(userId: string, data: { bio?: string, subjects?: string, experience?: string }): Promise<ITeacherProfile> {
         const query = `
             INSERT INTO teacher_profiles (user_id, bio, subjects, experience, updated_at)
             VALUES ($1, $2, $3, $4, NOW())

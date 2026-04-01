@@ -8,6 +8,7 @@ import {
     UpsertStudentProfileDTO
 } from './profiles.model';
 import { IUsersService } from '@modules/users';
+import { ICategoriesService } from '@modules/categories';
 import { UnauthorizedError, NotFoundError } from '@core/exceptions';
 
 export interface IProfilesService {
@@ -26,10 +27,20 @@ export interface IProfilesService {
 export class ProfilesService implements IProfilesService {
     private profilesRepo: IProfilesRepository;
     private usersService: IUsersService;
+    private categoriesService: ICategoriesService;
 
-    constructor({ profilesRepository, usersService }: { profilesRepository: IProfilesRepository, usersService: IUsersService }) {
+    constructor({
+        profilesRepository,
+        usersService,
+        categoriesService
+    }: {
+        profilesRepository: IProfilesRepository,
+        usersService: IUsersService,
+        categoriesService: ICategoriesService
+    }) {
         this.profilesRepo = profilesRepository;
         this.usersService = usersService;
+        this.categoriesService = categoriesService;
     }
 
     // Role Validator
@@ -49,7 +60,25 @@ export class ProfilesService implements IProfilesService {
 
     async upsertTeacher(userId: string, data: UpsertTeacherProfileDTO): Promise<ITeacherProfile> {
         await this.validateRole(userId, 'teacher');
-        return this.profilesRepo.upsertTeacher(userId, data);
+
+        let joinedSubjects: string | undefined = undefined;
+        if (data.subject_ids !== undefined) {
+            if (data.subject_ids.length > 0) {
+                const categories = await this.categoriesService.getByType('class_category');
+                const matchedNames = categories
+                    .filter(c => data.subject_ids!.includes(c.id))
+                    .map(c => c.name);
+                joinedSubjects = matchedNames.join(', ');
+            } else {
+                joinedSubjects = '';
+            }
+        }
+
+        return this.profilesRepo.upsertTeacher(userId, {
+            bio: data.bio,
+            subjects: joinedSubjects,
+            experience: data.experience
+        });
     }
 
     // --- PARENT ---
