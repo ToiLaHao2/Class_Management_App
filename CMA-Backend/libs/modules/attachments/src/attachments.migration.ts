@@ -16,7 +16,8 @@ export const ATTACHMENTS_MIGRATION = `
         provider_public_id TEXT,
         
         uploaded_by UUID REFERENCES users(id) ON DELETE SET NULL,
-        created_at TIMESTAMPTZ DEFAULT NOW()
+        created_at TIMESTAMPTZ DEFAULT NOW(),
+        updated_at TIMESTAMPTZ DEFAULT NOW()
     );
 
     CREATE INDEX IF NOT EXISTS idx_att_ref ON attachments(ref_type, ref_id);
