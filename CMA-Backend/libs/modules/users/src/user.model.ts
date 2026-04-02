@@ -6,6 +6,7 @@ export interface IUser {
     id: string; // UUID
     username: string;
     email: string;
+    full_name: string;
     date_of_birth?: Date;
     avatar_url?: string;
     role: 'student' | 'teacher' | 'parent' | 'admin';
@@ -39,7 +40,7 @@ export interface IContact {
  * DTO for User Login
  */
 export interface LoginDTO {
-    email: string;
+    identifier: string; // Có thể là Email hoặc Username
     password: string;
 }
 
@@ -49,6 +50,7 @@ export interface LoginDTO {
 export interface IUsersRepository {
     findById(id: string): Promise<IUserEntity | null>;
     findByEmail(email: string): Promise<IUserEntity | null>;
+    findByUsername(username: string): Promise<IUserEntity | null>;
     findAll(): Promise<IUserEntity[]>;
     create(data: Omit<IUserEntity, 'id' | 'created_at' | 'updated_at'>): Promise<IUserEntity>;
     update(id: string, partialData: Partial<IUserEntity>): Promise<IUserEntity>;
@@ -68,12 +70,19 @@ export interface IContactsRepository {
  * DTO for creating a new user
  */
 export interface CreateUserDTO {
-    email: string;
+    email?: string; // Optional để trẻ em có thể để trống
     password: string;
     username: string;
+    full_name: string;
     role: 'student' | 'teacher' | 'parent' | 'admin';
     avatar_url?: string;
     date_of_birth?: string; // ISO string
+    // Profile extra fields
+    bio?: string;
+    experience?: string;
+    subject_ids?: string[];
+    school?: string;
+    grade?: string;
 }
 
 /**

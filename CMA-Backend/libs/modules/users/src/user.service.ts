@@ -5,6 +5,8 @@ import { hashPassword } from '@core/utils';
 export interface IUsersService {
     getUserById(id: string): Promise<IUserEntity | null>;
     getUserByEmail(email: string): Promise<IUserEntity | null>;
+    getUserByUsername(username: string): Promise<IUserEntity | null>;
+    getUserByIdentifier(identifier: string): Promise<IUserEntity | null>;
     getAllUsers(): Promise<IUser[]>;
     createUser(data: CreateUserDTO): Promise<IUser>;
     updatePasswordHash(userId: string, hashedPassword: string): Promise<void>;
@@ -54,22 +56,45 @@ export class UsersService implements IUsersService {
         return this.usersRepository.findByEmail(email);
     }
 
+    async getUserByUsername(username: string): Promise<IUserEntity | null> {
+        return this.usersRepository.findByUsername(username);
+    }
+
+    async getUserByIdentifier(identifier: string): Promise<IUserEntity | null> {
+        // Kiểm tra xem identifier có phải là email không
+        const isEmail = identifier.includes('@');
+        if (isEmail) {
+            return this.usersRepository.findByEmail(identifier);
+        }
+        return this.usersRepository.findByUsername(identifier);
+    }
+
     async getAllUsers(): Promise<IUser[]> {
         const users = await this.usersRepository.findAll();
         return users.map(toSafeUser);
     }
 
     async createUser(data: CreateUserDTO): Promise<IUser> {
-        const existing = await this.usersRepository.findByEmail(data.email);
-        if (existing) {
-            throw new BadRequestError('Email đã được sử dụng');
+        // 1. Kiểm tra Username (Bắt buộc)
+        const existingUsername = await this.usersRepository.findByUsername(data.username);
+        if (existingUsername) {
+            throw new BadRequestError('Tên đăng nhập đã tồn tại');
+        }
+
+        // 2. Kiểm tra Email (Nếu có)
+        if (data.email) {
+            const existingEmail = await this.usersRepository.findByEmail(data.email);
+            if (existingEmail) {
+                throw new BadRequestError('Email đã được sử dụng');
+            }
         }
 
         const hashed_password = await hashPassword(data.password);
 
         const payload: Omit<IUserEntity, 'id' | 'created_at' | 'updated_at'> = {
-            email: data.email,
+            email: data.email as string, 
             username: data.username,
+            full_name: data.full_name,
             hashed_password,
             role: data.role,
             is_active: true,

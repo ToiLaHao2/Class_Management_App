@@ -21,7 +21,12 @@ const API_PREFIX = '/api';
 
 // === MIDDLEWARES ===
 app.use(helmet());
-app.use(cors());
+app.use(cors({
+    origin: ['http://localhost:5173'], // Frontend Vite default port
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+}));
 app.use(express.json());
 
 // === RATE LIMITING ===

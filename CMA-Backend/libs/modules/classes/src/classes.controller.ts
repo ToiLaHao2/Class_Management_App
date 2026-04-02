@@ -1,7 +1,7 @@
 import 'reflect-metadata';
 import {
     Controller, Get, Post, Put, Delete,
-    Route, Path, Body, Query, Tags, Security, SuccessResponse,
+    Route, Path, Body, Query, Tags, Security, SuccessResponse, Request,
 } from '@tsoa/runtime';
 import { IClassesService } from './classes.service';
 import type {
@@ -39,6 +39,18 @@ export class ClassesController extends Controller {
         return this.classesService.getAllClasses(
             Object.keys(filters).length > 0 ? filters : undefined
         );
+    }
+
+    /**
+     * Lấy danh sách các lớp học mà Học sinh hiện tại đang tham gia (Role: Student)
+     */
+    @Security('jwt', ['student'])
+    @Get('enrolled')
+    public async getEnrolledClasses(@Request() req: any): Promise<any[]> {
+        const userId = req.user.userId;
+        // Logic: Tìm student_profile -> Lấy danh sách lớp
+        // Để nhanh gọn, tôi sẽ xử lý thông qua Service
+        return this.classesService.getClassesByStudent(userId); 
     }
 
     /**

@@ -19,6 +19,9 @@
 					"email": {
 						"type": "string"
 					},
+					"full_name": {
+						"type": "string"
+					},
 					"date_of_birth": {
 						"type": "string",
 						"format": "date-time"
@@ -51,6 +54,7 @@
 					"id",
 					"username",
 					"email",
+					"full_name",
 					"role",
 					"is_active",
 					"created_at",
@@ -71,6 +75,9 @@
 					"username": {
 						"type": "string"
 					},
+					"full_name": {
+						"type": "string"
+					},
 					"role": {
 						"type": "string",
 						"enum": [
@@ -85,12 +92,30 @@
 					},
 					"date_of_birth": {
 						"type": "string"
+					},
+					"bio": {
+						"type": "string"
+					},
+					"experience": {
+						"type": "string"
+					},
+					"subject_ids": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
+					"school": {
+						"type": "string"
+					},
+					"grade": {
+						"type": "string"
 					}
 				},
 				"required": [
-					"email",
 					"password",
 					"username",
+					"full_name",
 					"role"
 				],
 				"type": "object",
@@ -996,7 +1021,7 @@
 			"LoginDTO": {
 				"description": "DTO for User Login",
 				"properties": {
-					"email": {
+					"identifier": {
 						"type": "string"
 					},
 					"password": {
@@ -1004,8 +1029,24 @@
 					}
 				},
 				"required": [
-					"email",
+					"identifier",
 					"password"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"RegisterChildDTO": {
+				"properties": {
+					"username": {
+						"type": "string"
+					},
+					"full_name": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"username",
+					"full_name"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -2670,6 +2711,36 @@
 				}
 			}
 		},
+		"/classes/enrolled": {
+			"get": {
+				"operationId": "GetEnrolledClasses",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"description": "Lấy danh sách các lớp học mà Học sinh hiện tại đang tham gia (Role: Student)",
+				"tags": [
+					"Classes"
+				],
+				"security": [
+					{
+						"jwt": [
+							"student"
+						]
+					}
+				],
+				"parameters": []
+			}
+		},
 		"/classes/{classId}": {
 			"get": {
 				"operationId": "GetClass",
@@ -3487,6 +3558,70 @@
 						"application/json": {
 							"schema": {
 								"$ref": "#/components/schemas/CreateUserDTO"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/auth/register-child": {
+			"post": {
+				"operationId": "RegisterChild",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"studentId": {
+											"type": "string"
+										},
+										"message": {
+											"type": "string"
+										}
+									},
+									"required": [
+										"studentId",
+										"message"
+									],
+									"type": "object"
+								}
+							}
+						}
+					},
+					"403": {
+						"description": "Forbidden"
+					},
+					"422": {
+						"description": "Validation Failed",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ValidateError"
+								}
+							}
+						}
+					}
+				},
+				"description": "Phụ huynh đăng ký tài khoản cho con (Chỉ role Parent).",
+				"tags": [
+					"Authentication"
+				],
+				"security": [
+					{
+						"jwt": [
+							"parent"
+						]
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/RegisterChildDTO"
 							}
 						}
 					}

@@ -127,6 +127,7 @@ export interface ITeachersClassesRepository {
 export interface IClassesStudentsRepository {
     findByClassId(classId: string): Promise<IClassStudent[]>;
     findByStudentId(studentId: string): Promise<IClassStudent[]>;
+    findEnrolledByUserId(userId: string): Promise<any[]>; // Trả về thông tin lớp kèm enrollment
     enroll(data: Record<string, unknown>): Promise<IClassStudent>;
     updateStatus(classId: string, studentId: string, data: Record<string, unknown>): Promise<IClassStudent>;
 }

@@ -116,8 +116,8 @@ export class ClassesService implements IClassesService {
         return this.classesStudentsRepo.findByClassId(classId);
     }
 
-    async getClassesByStudent(studentId: string): Promise<IClassStudent[]> {
-        return this.classesStudentsRepo.findByStudentId(studentId);
+    async getClassesByStudent(userId: string): Promise<any[]> {
+        return this.classesStudentsRepo.findEnrolledByUserId(userId);
     }
 
     async enrollStudent(classId: string, data: EnrollStudentDTO): Promise<IClassStudent> {

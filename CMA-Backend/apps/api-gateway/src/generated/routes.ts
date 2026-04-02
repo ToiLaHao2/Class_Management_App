@@ -57,6 +57,7 @@ const models: TsoaRoute.Models = {
             "id": {"dataType":"string","required":true},
             "username": {"dataType":"string","required":true},
             "email": {"dataType":"string","required":true},
+            "full_name": {"dataType":"string","required":true},
             "date_of_birth": {"dataType":"datetime"},
             "avatar_url": {"dataType":"string"},
             "role": {"dataType":"union","subSchemas":[{"dataType":"enum","enums":["student"]},{"dataType":"enum","enums":["teacher"]},{"dataType":"enum","enums":["parent"]},{"dataType":"enum","enums":["admin"]}],"required":true},
@@ -70,12 +71,18 @@ const models: TsoaRoute.Models = {
     "CreateUserDTO": {
         "dataType": "refObject",
         "properties": {
-            "email": {"dataType":"string","required":true},
+            "email": {"dataType":"string"},
             "password": {"dataType":"string","required":true},
             "username": {"dataType":"string","required":true},
+            "full_name": {"dataType":"string","required":true},
             "role": {"dataType":"union","subSchemas":[{"dataType":"enum","enums":["student"]},{"dataType":"enum","enums":["teacher"]},{"dataType":"enum","enums":["parent"]},{"dataType":"enum","enums":["admin"]}],"required":true},
             "avatar_url": {"dataType":"string"},
             "date_of_birth": {"dataType":"string"},
+            "bio": {"dataType":"string"},
+            "experience": {"dataType":"string"},
+            "subject_ids": {"dataType":"array","array":{"dataType":"string"}},
+            "school": {"dataType":"string"},
+            "grade": {"dataType":"string"},
         },
         "additionalProperties": false,
     },
@@ -471,8 +478,17 @@ const models: TsoaRoute.Models = {
     "LoginDTO": {
         "dataType": "refObject",
         "properties": {
-            "email": {"dataType":"string","required":true},
+            "identifier": {"dataType":"string","required":true},
             "password": {"dataType":"string","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "RegisterChildDTO": {
+        "dataType": "refObject",
+        "properties": {
+            "username": {"dataType":"string","required":true},
+            "full_name": {"dataType":"string","required":true},
         },
         "additionalProperties": false,
     },
@@ -1691,6 +1707,42 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsClassesController_getEnrolledClasses: Record<string, TsoaRoute.ParameterSchema> = {
+                req: {"in":"request","name":"req","required":true,"dataType":"object"},
+        };
+        app.get('/classes/enrolled',
+            authenticateMiddleware([{"jwt":["student"]}]),
+            ...(fetchMiddlewares<RequestHandler>(ClassesController)),
+            ...(fetchMiddlewares<RequestHandler>(ClassesController.prototype.getEnrolledClasses)),
+
+            async function ClassesController_getEnrolledClasses(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsClassesController_getEnrolledClasses, request, response });
+
+                const container: IocContainer = typeof iocContainer === 'function' ? (iocContainer as IocContainerFactory)(request) : iocContainer;
+
+                const controller: any = await container.get<ClassesController>(ClassesController);
+                if (typeof controller['setStatus'] === 'function') {
+                controller.setStatus(undefined);
+                }
+
+              await templateService.apiHandler({
+                methodName: 'getEnrolledClasses',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         const argsClassesController_getClass: Record<string, TsoaRoute.ParameterSchema> = {
                 classId: {"in":"path","name":"classId","required":true,"dataType":"string"},
         };
@@ -2369,6 +2421,43 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
 
               await templateService.apiHandler({
                 methodName: 'register',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsAuthController_registerChild: Record<string, TsoaRoute.ParameterSchema> = {
+                req: {"in":"request","name":"req","required":true,"dataType":"object"},
+                body: {"in":"body","name":"body","required":true,"ref":"RegisterChildDTO"},
+        };
+        app.post('/auth/register-child',
+            authenticateMiddleware([{"jwt":["parent"]}]),
+            ...(fetchMiddlewares<RequestHandler>(AuthController)),
+            ...(fetchMiddlewares<RequestHandler>(AuthController.prototype.registerChild)),
+
+            async function AuthController_registerChild(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsAuthController_registerChild, request, response });
+
+                const container: IocContainer = typeof iocContainer === 'function' ? (iocContainer as IocContainerFactory)(request) : iocContainer;
+
+                const controller: any = await container.get<AuthController>(AuthController);
+                if (typeof controller['setStatus'] === 'function') {
+                controller.setStatus(undefined);
+                }
+
+              await templateService.apiHandler({
+                methodName: 'registerChild',
                 controller,
                 response,
                 next,

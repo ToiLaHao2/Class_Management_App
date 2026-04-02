@@ -14,6 +14,11 @@ interface UpdateProfileDTO {
     avatar_url?: string;
 }
 
+interface RegisterChildDTO {
+    username: string;
+    full_name: string;
+}
+
 @Route('auth')
 @Tags('Authentication')
 export class AuthController extends Controller {
@@ -43,12 +48,28 @@ export class AuthController extends Controller {
     @Response<ValidateError>(422, 'Validation Failed')
     @Response(400, 'Bad Request - Email Exists')
     public async register(@Body() body: CreateUserDTO) {
-        const user = await this.usersService.createUser(body);
+        const user = await this.authService.register(body);
         this.setStatus(201);
         return {
             message: "Đăng ký tài khoản thành công",
             user
         };
+    }
+
+    /**
+     * Phụ huynh đăng ký tài khoản cho con (Chỉ role Parent).
+     */
+    @Security('jwt', ['parent'])
+    @Post('register-child')
+    @Response<ValidateError>(422, 'Validation Failed')
+    @Response(403, 'Forbidden')
+    public async registerChild(@Request() req: any, @Body() body: RegisterChildDTO) {
+        const parentId = req?.user?.userId;
+        if (!parentId) {
+            throw new UnauthorizedError('Unauthorized');
+        }
+        this.setStatus(201);
+        return this.authService.registerChild(parentId, body);
     }
 
     /**

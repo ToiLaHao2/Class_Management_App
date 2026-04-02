@@ -14,6 +14,9 @@ export class FirebaseUsersRepository implements IUsersRepository {
         this.baseRepo = new BaseFirebaseRepository(firestore, 'users');
         this.collection = firestore.collection('users');
     }
+    findByUsername(username: string): Promise<IUserEntity | null> {
+        throw new Error('Method not implemented.');
+    }
 
     async findById(id: string): Promise<IUserEntity | null> {
         const doc = await this.baseRepo.findById(id);

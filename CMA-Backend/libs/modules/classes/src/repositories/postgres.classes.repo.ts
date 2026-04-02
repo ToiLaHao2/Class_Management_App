@@ -156,6 +156,24 @@ export class PostgresClassesStudentsRepository implements IClassesStudentsReposi
         return result.rows.map(mapClassStudent);
     }
 
+    async findEnrolledByUserId(userId: string): Promise<any[]> {
+        const result = await this.pool.query(
+            `SELECT c.*, cs.status as enrollment_status, cs.startdate, cs.enddate 
+             FROM classes c
+             JOIN classes_students cs ON c.id = cs.class_id
+             JOIN student_profiles sp ON cs.student_id = sp.id
+             WHERE sp.user_id = $1
+             ORDER BY cs.created_at DESC`,
+            [userId]
+        );
+        return result.rows.map(row => ({
+            ...mapClass(row),
+            enrollment_status: row.enrollment_status,
+            startdate: row.startdate,
+            enddate: row.enddate
+        }));
+    }
+
     async enroll(data: Record<string, unknown>): Promise<IClassStudent> {
         const result = await this.pool.query(
             `INSERT INTO classes_students (class_id, student_id, status, startdate, enddate)

@@ -19,6 +19,7 @@
     "libs/modules/*"
   ],
   "devDependencies": {
+    "@playwright/test": "^1.59.1",
     "@types/express": "^5.0.6",
     "@types/lru-cache": "^7.10.9",
     "@types/node": "^25.3.3",

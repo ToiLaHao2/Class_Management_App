@@ -17,6 +17,7 @@ export class PostgresUsersRepository implements IUsersRepository {
             id: row.id as string,
             username: row.username as string,
             email: row.email as string,
+            full_name: (row.full_name as string) ?? '',
             date_of_birth: row.date_of_birth ? new Date(row.date_of_birth as string) : undefined,
             avatar_url: (row.avatar_url as string) ?? undefined,
             hashed_password: row.hashed_password as string,
@@ -40,6 +41,12 @@ export class PostgresUsersRepository implements IUsersRepository {
 
     async findByEmail(email: string): Promise<IUserEntity | null> {
         const rows = await this.baseRepo.findWhere({ email });
+        if (rows.length === 0) return null;
+        return this.mapRow(rows[0]);
+    }
+
+    async findByUsername(username: string): Promise<IUserEntity | null> {
+        const rows = await this.baseRepo.findWhere({ username });
         if (rows.length === 0) return null;
         return this.mapRow(rows[0]);
     }
