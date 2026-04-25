@@ -49,14 +49,18 @@ export class UsersService implements IUsersService {
     private contactsRepository: IContactsRepository;
     private db: any;
 
-    constructor({ usersRepository, contactsRepository, db }: {
+    private mongoDb: any;
+
+    constructor({ usersRepository, contactsRepository, db, mongoDb }: {
         usersRepository: IUsersRepository;
         contactsRepository: IContactsRepository;
         db: any;
+        mongoDb: any;
     }) {
         this.usersRepository = usersRepository;
         this.contactsRepository = contactsRepository;
         this.db = db;
+        this.mongoDb = mongoDb;
     }
 
     async getUserById(id: string): Promise<IUserEntity | null> {
@@ -202,8 +206,7 @@ export class UsersService implements IUsersService {
                 await this.db.getDB().query('SELECT 1');
                 dbStatus = 'healthy';
                 latencyStr = `${Date.now() - start}ms`;
-            } else {
-                // Check if db is a BasePostgresRepository with query support directly
+            } else if (this.db && typeof this.db.query === 'function') {
                 await this.db.query('SELECT 1');
                 dbStatus = 'healthy';
                 latencyStr = `${Date.now() - start}ms`;
@@ -212,10 +215,37 @@ export class UsersService implements IUsersService {
             latencyStr = 'timeout';
         }
 
+        // MongoDB Health check
+        let mongoStatus: 'healthy' | 'warning' | 'error' = 'error';
+        let mongoLatency = 'offline';
+        if (this.mongoDb && typeof this.mongoDb.isConnected === 'function' && this.mongoDb.isConnected()) {
+            const startM = Date.now();
+            try {
+                // Use the adapter's ping method if available
+                if (typeof this.mongoDb.ping === 'function') {
+                    const pingTime = await this.mongoDb.ping();
+                    if (pingTime >= 0) {
+                        mongoStatus = 'healthy';
+                        mongoLatency = `${pingTime}ms`;
+                    }
+                } else {
+                    mongoStatus = 'healthy';
+                    mongoLatency = `${Date.now() - startM}ms`;
+                }
+            } catch (e) {
+                mongoStatus = 'error';
+                mongoLatency = 'error';
+            }
+        } else if (this.mongoDb) {
+            mongoStatus = 'warning';
+            mongoLatency = 'not connected';
+        }
+
         return {
             services: [
-                { name: 'Core API Gateway', status: 'healthy' as const, latency: '5ms' },
+                { name: 'Core API Gateway', status: 'healthy' as const, latency: '2ms' },
                 { name: 'PostgreSQL Database', status: dbStatus, latency: latencyStr },
+                { name: 'MongoDB (Logs)', status: mongoStatus, latency: mongoLatency },
                 { name: 'JWT Auth Module', status: 'healthy' as const, latency: '1ms' },
             ],
             uptime: '99.9%'

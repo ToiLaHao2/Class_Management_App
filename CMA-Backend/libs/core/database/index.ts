@@ -9,3 +9,7 @@ export { seedSuperAdmin } from './src/seed';
 export { postgresAdapter } from './src/adapters/postgres.adapter';
 export { BasePostgresRepository } from './src/repositories/base-postgres.repository';
 export { seedSuperAdminPostgres } from './src/seed-postgres';
+
+// MongoDB (for Logs, Notifications, Analytics)
+export { mongoAdapter } from './src/adapters/mongo.adapter';
+export type { MongoConfig } from './src/adapters/mongo.adapter';

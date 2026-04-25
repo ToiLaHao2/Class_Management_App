@@ -32,6 +32,17 @@ const envSchema = z.object({
 
     STORAGE_PROVIDER: z.enum(['local', 'cloudflare_r2', 'cloudinary', 'aws_s3']).default('local'),
 
+    // Cloudflare R2 (optional — only when STORAGE_PROVIDER=cloudflare_r2)
+    R2_ACCOUNT_ID: z.string().optional(),
+    R2_ACCESS_KEY_ID: z.string().optional(),
+    R2_SECRET_ACCESS_KEY: z.string().optional(),
+    R2_BUCKET_NAME: z.string().optional(),
+    R2_PUBLIC_URL: z.string().optional(),
+
+    // MongoDB (optional — for Logs, Notifications, Analytics)
+    MONGO_URI: z.string().optional(),
+    MONGO_DATABASE: z.string().default('cma_logs'),
+
     RATE_LIMIT_WINDOW_MS: z.string().default('900000').transform(Number),    // 15 minutes
     RATE_LIMIT_MAX: z.string().default('100').transform(Number),
     RATE_LIMIT_AUTH_MAX: z.string().default('10').transform(Number),
@@ -103,6 +114,19 @@ export const storageConfig = {
     apiSecret: envVars.CLOUDINARY_API_SECRET,
     /** Giới hạn lưu trữ tự động tra theo provider — không cần ghi cứng */
     storageLimitGb: PROVIDER_STORAGE_LIMITS_GB[envVars.STORAGE_PROVIDER] ?? 5,
+} as const;
+
+export const r2Config = {
+    accountId: envVars.R2_ACCOUNT_ID,
+    accessKeyId: envVars.R2_ACCESS_KEY_ID,
+    secretAccessKey: envVars.R2_SECRET_ACCESS_KEY,
+    bucketName: envVars.R2_BUCKET_NAME,
+    publicUrl: envVars.R2_PUBLIC_URL,
+} as const;
+
+export const mongoConfig = {
+    uri: envVars.MONGO_URI,
+    database: envVars.MONGO_DATABASE,
 } as const;
 
 export const rateLimitConfig = {
