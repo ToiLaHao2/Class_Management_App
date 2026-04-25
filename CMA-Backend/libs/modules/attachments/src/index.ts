@@ -5,7 +5,8 @@ import { Pool } from 'pg';
 
 import { PostgresAttachmentsRepository } from './repositories/postgres.attachments.repo';
 import { AttachmentsService } from './attachments.service';
-import { ATTACHMENTS_MIGRATION } from './attachments.migration';
+// Migration is handled centrally by migration-runner.ts (combo.ts startup)
+
 
 // Import core storage 
 import { cloudinaryAdapter } from '@core/storage';
@@ -20,13 +21,7 @@ class AttachmentsModule implements IAppModule {
     register(app: Application, container: AwilixContainer): void {
         const router = express.Router();
 
-        const db = container.resolve<{ getDB: () => Pool }>('db');
-        const pool = db.getDB();
-        if (pool) {
-            pool.query(ATTACHMENTS_MIGRATION)
-                .then(() => console.log('✅ [Attachments] Table ready (attachments) [Polymorphic].'))
-                .catch((err: Error) => console.error('❌ [Attachments] Migration error:', err.message));
-        }
+        // Migration handled centrally at startup — no inline call needed here
 
         // Register DI
         container.register({

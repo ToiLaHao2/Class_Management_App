@@ -10,7 +10,8 @@ import {
     PostgresLessonsRepository,
 } from './repositories/postgres.classes.repo';
 import { ClassesService } from './classes.service';
-import { CLASSES_MIGRATION } from './classes.migration';
+// Migration is handled centrally by migration-runner.ts (combo.ts startup)
+
 
 export * from './classes.model';
 export * from './classes.service';
@@ -22,14 +23,7 @@ class ClassesModule implements IAppModule {
     register(app: Application, container: AwilixContainer): void {
         const router = express.Router();
 
-        // Auto-migration: Tạo 4 bảng classes
-        const db = container.resolve<{ getDB: () => Pool }>('db');
-        const pool = db.getDB();
-        if (pool) {
-            pool.query(CLASSES_MIGRATION)
-                .then(() => console.log('✅ [Classes] Tables ready (classes, teachers_classes, classes_students, lessons).'))
-                .catch((err: Error) => console.error('❌ [Classes] Migration error:', err.message));
-        }
+        // Migration handled centrally at startup — no inline call needed here
 
         // DI Registration
         container.register({

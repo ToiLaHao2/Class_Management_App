@@ -8,7 +8,8 @@ import {
     PostgresLessonLogsRepository,
 } from './repositories/postgres.schedules.repo';
 import { SchedulesService } from './schedules.service';
-import { SCHEDULES_MIGRATION } from './schedules.migration';
+// Migration is handled centrally by migration-runner.ts (combo.ts startup)
+
 
 export * from './schedules.model';
 export * from './schedules.service';
@@ -20,13 +21,7 @@ class SchedulesModule implements IAppModule {
     register(app: Application, container: AwilixContainer): void {
         const router = express.Router();
 
-        const db = container.resolve<{ getDB: () => Pool }>('db');
-        const pool = db.getDB();
-        if (pool) {
-            pool.query(SCHEDULES_MIGRATION)
-                .then(() => console.log('✅ [Schedules] Tables ready (schedules, lesson_logs).'))
-                .catch((err: Error) => console.error('❌ [Schedules] Migration error:', err.message));
-        }
+        // Migration handled centrally at startup — no inline call needed here
 
         container.register({
             schedulesRepository: asClass(PostgresSchedulesRepository).singleton(),

@@ -4,7 +4,7 @@ import { Application } from 'express';
 import { PostgresNotificationsRepository } from './repositories/postgres.notifications.repo';
 import { NotificationsService } from './notifications.service';
 import { NotificationsController } from './notifications.controller';
-import { NOTIFICATIONS_MIGRATION } from './notifications.migration';
+// Migration is handled centrally by migration-runner.ts (combo.ts startup)
 import { SocketIoRedisPublisher } from '@core/events';
 
 export * from './notifications.model';
@@ -31,14 +31,7 @@ class NotificationsModule implements IAppModule {
             NotificationsController: asClass(NotificationsController).singleton(),
         });
 
-        // 3. Auto-Migration
-        const db = container.resolve<any>('db');
-        const pool = db.getDB();
-        if (pool) {
-            pool.query(NOTIFICATIONS_MIGRATION)
-                .then(() => console.log('✅ [Notifications] Tables ready.'))
-                .catch((err: Error) => console.error('❌ [Notifications] Migration error:', err.message));
-        }
+        // Migration handled centrally at startup — no inline call needed here
 
         console.log(`📦 Module registered: [${this.name}] (with DI)`);
     }

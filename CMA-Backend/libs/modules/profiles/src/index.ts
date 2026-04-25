@@ -5,7 +5,8 @@ import { Pool } from 'pg';
 
 import { PostgresProfilesRepository } from './repositories/postgres.profiles.repo';
 import { ProfilesService } from './profiles.service';
-import { PROFILES_MIGRATION } from './profiles.migration';
+// Migration is handled centrally by migration-runner.ts (combo.ts startup)
+
 
 export * from './profiles.model';
 export * from './profiles.service';
@@ -17,14 +18,7 @@ class ProfilesModule implements IAppModule {
     register(app: Application, container: AwilixContainer): void {
         const router = express.Router();
 
-        // Auto-migration: Tạo bảng profiles
-        const db = container.resolve<{ getDB: () => Pool }>('db');
-        const pool = db.getDB();
-        if (pool) {
-            pool.query(PROFILES_MIGRATION)
-                .then(() => console.log('✅ [Profiles] Tables ready (teacher, parent, student).'))
-                .catch((err: Error) => console.error('❌ [Profiles] Migration error:', err.message));
-        }
+        // Migration handled centrally at startup — no inline call needed here
 
         // DI Registration
         container.register({

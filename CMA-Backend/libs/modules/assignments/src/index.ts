@@ -10,7 +10,8 @@ import {
     PostgresStudentSubmissionsRepository,
 } from './repositories/postgres.assignments.repo';
 import { AssignmentsService } from './assignments.service';
-import { ASSIGNMENTS_MIGRATION } from './assignments.migration';
+// Migration is handled centrally by migration-runner.ts (combo.ts startup)
+
 
 export * from './assignments.model';
 export * from './assignments.service';
@@ -22,13 +23,7 @@ class AssignmentsModule implements IAppModule {
     register(app: Application, container: AwilixContainer): void {
         const router = express.Router();
 
-        const db = container.resolve<{ getDB: () => Pool }>('db');
-        const pool = db.getDB();
-        if (pool) {
-            pool.query(ASSIGNMENTS_MIGRATION)
-                .then(() => console.log('✅ [Assignments] Tables ready (assignments, questions, assignment_questions, submissions).'))
-                .catch((err: Error) => console.error('❌ [Assignments] Migration error:', err.message));
-        }
+        // Migration handled centrally at startup — no inline call needed here
 
         container.register({
             assignmentsRepository: asClass(PostgresAssignmentsRepository).singleton(),
