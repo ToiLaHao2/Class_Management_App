@@ -15,11 +15,13 @@ const handleCastErrorDB = (err: ErrorWithExtras): AppError => {
 };
 
 const sendErrorDev = (err: ErrorWithExtras, res: Response): void => {
+    // Log lỗi ra console để dev vẫn thấy chi tiết khi debug backend
+    console.error('💥 [DEV ERROR]:', err);
+    
+    // Gửi response sạch sẽ về frontend (không lộ file path / stack trace)
     res.status(err.statusCode || 500).json({
         status: err.status,
-        error: err,
         message: err.message,
-        stack: err.stack
     });
 };
 

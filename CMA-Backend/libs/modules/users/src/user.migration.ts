@@ -12,6 +12,7 @@ export const USERS_MIGRATION = `
     CREATE TABLE "users" (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         username TEXT NOT NULL,
+        full_name TEXT,
         email TEXT UNIQUE NOT NULL,
         date_of_birth TIMESTAMPTZ,
         avatar_url TEXT,
