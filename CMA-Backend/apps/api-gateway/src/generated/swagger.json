@@ -8,7 +8,7 @@
 		"responses": {},
 		"schemas": {
 			"IUser": {
-				"description": "User Model — TypeScript Interface & Response DTO\nSchema mới: UUID, username, date_of_birth, is_active",
+				"description": "User Model — TypeScript Interface & Response DTO\r\nSchema mới: UUID, username, date_of_birth, is_active",
 				"properties": {
 					"id": {
 						"type": "string"
@@ -214,7 +214,7 @@
 				"additionalProperties": false
 			},
 			"ISchedule": {
-				"description": "Schedules Module — TypeScript Interfaces & DTOs\nBao gồm: schedules, lesson_logs, attachments",
+				"description": "Schedules Module — TypeScript Interfaces & DTOs\r\nBao gồm: schedules, lesson_logs, attachments",
 				"properties": {
 					"id": {
 						"type": "string"
@@ -585,7 +585,7 @@
 				"additionalProperties": false
 			},
 			"IClass": {
-				"description": "Classes Module — TypeScript Interfaces & DTOs\nBao gồm: classes, teachers_classes, classes_students, lessons\n(lesson_logs sẽ được thêm ở Phase 5 cùng schedules)",
+				"description": "Classes Module — TypeScript Interfaces & DTOs\r\nBao gồm: classes, teachers_classes, classes_students, lessons\r\n(lesson_logs sẽ được thêm ở Phase 5 cùng schedules)",
 				"properties": {
 					"id": {
 						"type": "string"
@@ -905,7 +905,7 @@
 				"additionalProperties": false
 			},
 			"ICategory": {
-				"description": "Categories Model — Bảng lookup dùng chung cho toàn hệ thống.\nThay thế hardcoded enums bằng dữ liệu DB-driven.",
+				"description": "Categories Model — Bảng lookup dùng chung cho toàn hệ thống.\r\nThay thế hardcoded enums bằng dữ liệu DB-driven.",
 				"properties": {
 					"id": {
 						"type": "string"
@@ -2602,7 +2602,7 @@
 						}
 					}
 				},
-				"description": "API Test (Chỉ dùng nội bộ/cho role test) để bắn thông báo.\nThực tế các service khác gọi trực tiếp internal methods.",
+				"description": "API Test (Chỉ dùng nội bộ/cho role test) để bắn thông báo.\r\nThực tế các service khác gọi trực tiếp internal methods.",
 				"tags": [
 					"Notifications"
 				],
@@ -4553,7 +4553,7 @@
 						}
 					}
 				},
-				"description": "System health check — verifies connectivity of all core dependencies.\nUsed by deployment platforms (Render, Railway, AWS ECS) to determine app status.",
+				"description": "System health check — verifies connectivity of all core dependencies.\r\nUsed by deployment platforms (Render, Railway, AWS ECS) to determine app status.",
 				"tags": [
 					"System"
 				],
